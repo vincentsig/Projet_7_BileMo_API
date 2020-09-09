@@ -42,6 +42,12 @@ class Phone
      */
     private $description;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=specification::class, inversedBy="phones")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $specifications;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -103,6 +109,18 @@ class Phone
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getSpecifications(): ?specification
+    {
+        return $this->specifications;
+    }
+
+    public function setSpecifications(?specification $specifications): self
+    {
+        $this->specifications = $specifications;
 
         return $this;
     }

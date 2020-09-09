@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SpecificationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -45,7 +47,7 @@ class Specification
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $read_camera_resolution;
+    private $rear_camera_resolution;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -66,6 +68,16 @@ class Specification
      * @ORM\Column(type="string", length=255)
      */
     private $weight;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Phone::class, mappedBy="specifications")
+     */
+    private $phones;
+
+    public function __construct()
+    {
+        $this->phones = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -132,14 +144,14 @@ class Specification
         return $this;
     }
 
-    public function getReadCameraResolution(): ?string
+    public function getRearCameraResolution(): ?string
     {
-        return $this->read_camera_resolution;
+        return $this->rear_camera_resolution;
     }
 
-    public function setReadCameraResolution(string $read_camera_resolution): self
+    public function setRearCameraResolution(string $rear_camera_resolution): self
     {
-        $this->read_camera_resolution = $read_camera_resolution;
+        $this->rear_camera_resolution = $rear_camera_resolution;
 
         return $this;
     }
@@ -188,6 +200,37 @@ class Specification
     public function setWeight(string $weight): self
     {
         $this->weight = $weight;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Phone[]
+     */
+    public function getPhones(): Collection
+    {
+        return $this->phones;
+    }
+
+    public function addPhone(Phone $phone): self
+    {
+        if (!$this->phones->contains($phone)) {
+            $this->phones[] = $phone;
+            $phone->setSpecifications($this);
+        }
+
+        return $this;
+    }
+
+    public function removePhone(Phone $phone): self
+    {
+        if ($this->phones->contains($phone)) {
+            $this->phones->removeElement($phone);
+            // set the owning side to null (unless alreary changed)
+            if ($phone->getSpecifications() === $this) {
+                $phone->setSpecifications(null);
+            }
+        }
 
         return $this;
     }

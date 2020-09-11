@@ -6,6 +6,8 @@ use App\Repository\SpecificationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=SpecificationRepository::class)
@@ -21,51 +23,71 @@ class Specification
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
      */
     private $OS;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
      */
     private $storage;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
      */
     private $sim;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
      */
     private $network;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
      */
     private $wifi;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
      */
     private $rear_camera_resolution;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
      */
     private $front_camera_resolution;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
      */
     private $display_resolution;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
      */
     private $dimensions;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
      */
     private $weight;
 

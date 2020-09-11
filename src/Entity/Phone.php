@@ -2,11 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\PhoneRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PhoneRepository;
+use JMS\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=PhoneRepository::class)
+ * @Serializer\ExclusionPolicy("all")
  */
 class Phone
 {
@@ -19,32 +22,44 @@ class Phone
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Expose()
+     * @Groups({"list","details"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Expose()
+     * @Groups({"list","details"})
      */
     private $brand;
 
     /**
      * @ORM\Column(type="float")
+     * @Serializer\Expose()
+     * @Groups({"list","details"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="integer")
+     * @Serializer\Expose()
+     * @Groups({"details"})
      */
     private $stock;
 
     /**
      * @ORM\Column(type="text")
+     * @Serializer\Expose()
+     * @Groups({"details"})
      */
     private $description;
 
     /**
-     * @ORM\ManyToOne(targetEntity=specification::class, inversedBy="phones")
+     * @ORM\ManyToOne(targetEntity=Specification::class, inversedBy="phones")
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Expose()
+     * @Groups({"details"})
      */
     private $specifications;
 

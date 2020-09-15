@@ -3,6 +3,10 @@ security:
     providers:
         users_in_memory: { memory: null }
     firewalls:
+        doc:
+            pattern: ^/api/doc
+            security: false
+            
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false

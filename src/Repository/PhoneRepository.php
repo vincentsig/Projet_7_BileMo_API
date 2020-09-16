@@ -19,6 +19,12 @@ class PhoneRepository extends ServiceEntityRepository
         parent::__construct($registry, Phone::class);
     }
 
+    public function ListQueryBuilder()
+    {
+        return  $this->createQueryBuilder('p');
+    }
+
+
     // /**
     //  * @return Phone[] Returns an array of Phone objects
     //  */

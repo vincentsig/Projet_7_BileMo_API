@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Service\Pagination;
 use JMS\Serializer\SerializerInterface;
 use JMS\Serializer\SerializationContext;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,17 +24,19 @@ class UserController extends AbstractController
     /**
      * @Route("/api/users", name="list_user", methods={"GET"})
      */
-    public function List(UserRepository $repo, Request $request): Response
+    public function List(UserRepository $repo, Request $request, Pagination $pagination): Response
     {
+        $users = $pagination->findPaginatedList($repo, $request);
+
 
         return new Response(
             $this->serializer->serialize(
-                $repo->findAll(),
+                $users,
                 'json',
-                SerializationContext::create()->setGroups(['list'])
+                SerializationContext::create()->setGroups(['Default', 'items' => ['list']])
             ),
             200,
-            ['Content-Type' => 'application/json']
+            ['Content-Type' => 'application/hal+json']
         );
     }
 

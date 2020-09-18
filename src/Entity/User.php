@@ -6,10 +6,33 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
 use JMS\Serializer\Annotation as Serializer;
+use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @Serializer\ExclusionPolicy("all")
+ * 
+ * @Hateoas\Relation(
+ *    "self",
+ *    href = @Hateoas\Route(
+ *        "list_users",
+ *        absolute = true
+ *    ),
+ *     exclusion = @Hateoas\Exclusion(groups={"list"})
+ * )
+ * 
+ * @Hateoas\Relation(
+ *    "detail",
+ *    href = @Hateoas\Route(
+ *        "details_user",
+ * parameters = {
+ *             "id" = "expr(object.getId())"
+ *             },
+ *        absolute = true
+ *    ),
+ *     exclusion = @Hateoas\Exclusion(groups={"list","detail"})
+ * )
+ * 
  */
 class User
 {
@@ -51,6 +74,9 @@ class User
     /**
      * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Expose()
+     * @Groups({"details"})
+     * 
      * 
      */
     private $company;

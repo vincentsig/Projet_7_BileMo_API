@@ -3,16 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Phone;
-use App\Repository\PhoneRepository;
 use App\Service\Pagination;
+use Swagger\Annotations as SWG;
+use App\Repository\PhoneRepository;
 use JMS\Serializer\SerializerInterface;
 use JMS\Serializer\SerializationContext;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Swagger\Annotations as SWG;
-use Nelmio\ApiDocBundle\Annotation\Model;
 
 
 class PhoneController extends AbstractController

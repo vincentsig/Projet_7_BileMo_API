@@ -24,12 +24,14 @@ class Company implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
+     * @Serializer\Expose()
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Expose()
      */
     private $password;
 
@@ -42,6 +44,7 @@ class Company implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Expose()
      */
     private $phone;
 
@@ -110,13 +113,9 @@ class Company implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getRoles(): array
+    public function getRoles()
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        return array('ROLE_USER');
     }
 
     /**
@@ -126,7 +125,7 @@ class Company implements UserInterface
      */
     public function getUsername()
     {
-        return $this->email;
+        return $this->getEmail();
     }
     /**
      * @see UserInterface

@@ -3,16 +3,18 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Repository\UserRepository;
 use App\Service\Pagination;
+use Swagger\Annotations as SWG;
+use App\Repository\UserRepository;
+use App\Repository\CompanyRepository;
 use JMS\Serializer\SerializerInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Swagger\Annotations as SWG;
-use Nelmio\ApiDocBundle\Annotation\Model;
 
 
 class UserController extends AbstractController
@@ -69,7 +71,7 @@ class UserController extends AbstractController
      * 
      * @SWG\Tag(name="User")
      */
-    public function List(UserRepository $repo, Request $request, Pagination $pagination): Response
+    public function list(UserRepository $repo, Request $request, Pagination $pagination): Response
     {
         $users = $pagination->findPaginatedList($repo, $request);
 
@@ -124,7 +126,7 @@ class UserController extends AbstractController
      * 
      * @SWG\Tag(name="User")
      */
-    public function Details(User $user, UserRepository $repo, Request $request): Response
+    public function details(User $user, UserRepository $repo, Request $request): Response
     {
         return new Response(
             $this->serializer->serialize(
@@ -135,5 +137,52 @@ class UserController extends AbstractController
             200,
             ['Content-Type' => 'application/json']
         );
+    }
+
+    /**
+     * @Route("api/users", name="new_user", methods={"POST"})
+     */
+    public function create(CompanyRepository $repo, Request $request, EntityManagerInterface $entityManager): response
+    {
+        $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
+
+        $user->setCompany($repo->find($this->getUser()->getId()));
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        $data = [
+            'status' => 201,
+            'message' => 'The user has been created'
+        ];
+
+        return new Response($this->serializer->serialize($data, 'json'), 201, ['Content-Type' => 'application/json']);
+    }
+
+    /**
+     * @Route("api/users/{id}", name="delete_user", methods="DELETE")
+     */
+    public function delete(User $user, EntityManagerInterface $entityManager, UserRepository $repo)
+    {
+
+        $userValid = $repo->FindUserByCompany(($this->getUser()->getId()), $user->getId());
+
+        if (!$userValid) {
+            $data = [
+                'status' => 401,
+                'message' => 'Invalid user id'
+            ];
+
+            return new Response($this->serializer->serialize($data, 'json'), 401, ['Content-Type' => 'application/json']);
+        }
+
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        $data = [
+            'status' => 200,
+            'message' => 'The user has been removed'
+        ];
+
+        return new Response($this->serializer->serialize($data, 'json'), 200, ['Content-Type' => 'application/json']);
     }
 }

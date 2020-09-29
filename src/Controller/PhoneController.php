@@ -3,15 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Phone;
+use App\Service\Pagination;
+use Swagger\Annotations as SWG;
 use App\Repository\PhoneRepository;
 use JMS\Serializer\SerializerInterface;
 use JMS\Serializer\SerializationContext;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Swagger\Annotations as SWG;
-use Nelmio\ApiDocBundle\Annotation\Model;
 
 
 class PhoneController extends AbstractController
@@ -67,16 +68,18 @@ class PhoneController extends AbstractController
      * )
      *  @SWG\Tag(name="Phone")
      */
-    public function List(Request $request, PhoneRepository $repo): Response
+    public function List(Request $request, PhoneRepository $repo, Pagination $pagination): Response
     {
-        $phones = $repo->findAll();
 
-        $data = $this->serializer->serialize($phones, 'json', SerializationContext::create()->setGroups(['list']));
-        return new Response($data, 200, ['Content-Type' => 'application/json']);
+        $phones = $pagination->findPaginatedList($repo, $request);
+
+        $data = $this->serializer->serialize($phones, 'json', SerializationContext::create()->setGroups(['Default', 'items' => ['list']]));
+
+        return new Response($data, 200, ['Content-Type' => 'application/hal+json']);
     }
 
     /**
-     * @Route ("api/phones/{id}", name = "detail_phone", methods = {"GET"})
+     * @Route ("api/phones/{id}", name = "details_phone", methods = {"GET"})
      * @param $id
      * @return Response
      * 

@@ -2,7 +2,7 @@ nelmio_api_doc:
     documentation:
         info:
             title: BileMo
-            description: Retrouvez les meilleurs smartphones du marché sur cette API!
+            description: Retrouvez les meilleurs smartphones du marché sur cette API !
             version: 1.0.0
             
         securityDefinitions:
@@ -14,6 +14,7 @@ nelmio_api_doc:
                 scheme: Bearer
         security:
             - Bearer: []
+        
     areas: # to filter documented areas
         path_patterns:
             - ^/api(?!/doc$) # Accepts routes under /api except /api/doc

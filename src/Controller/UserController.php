@@ -11,6 +11,7 @@ use JMS\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,13 +27,14 @@ class UserController extends AbstractController
     {
         $this->serializer = $serializer;
     }
+
     /**
      * @Route("/api/users", name="list_users", methods={"GET"})
      * @return Response
      * 
      * @SWG\Get(
      *     description="Get the list of users.",
-     *   tags = {"User"},
+     *     tags = {"User"},
      * )
      * 
      * @SWG\Parameter(
@@ -70,6 +72,7 @@ class UserController extends AbstractController
      * )
      * 
      * @SWG\Tag(name="User")
+     * @Security(name="Bearer")
      */
     public function list(UserRepository $repo, Request $request, Pagination $pagination): Response
     {
@@ -105,8 +108,8 @@ class UserController extends AbstractController
      * 
      * @SWG\Response(
      *     response=200,
-     *     description="Returns the list of users",
-     *           @SWG\Schema(
+     *     description="Returns the details of users",
+     * @SWG\Schema(
      *              type="array",
      *              @SWG\Items(ref=@Model(type=User::class, groups={"list","details"}))
      *          )
@@ -125,6 +128,7 @@ class UserController extends AbstractController
      * )
      * 
      * @SWG\Tag(name="User")
+     * @Security(name="Bearer")
      */
     public function details(User $user, UserRepository $repo, Request $request): Response
     {
@@ -141,8 +145,45 @@ class UserController extends AbstractController
 
     /**
      * @Route("api/users", name="new_user", methods={"POST"})
+     * 
+     * @SWG\Post(
+     *      description="Create a new user",
+     *      tags = {"User"},
+     * ),
+     * 
+     * 
+     * @SWG\Parameter(
+     *          name="Body",
+     *          required= true,
+     *          in="body",
+     *          type="string",
+     *          description="All property user to add",
+     *          @SWG\Schema(
+     *              type="array",
+     *              @Model(type=User::class, groups={"details"}))
+     * ),
+     *    
+     * @SWG\Response(
+     *     response=200,
+     *     description="User created",
+     * ),
+     * @SWG\Response(
+     *     response=401,
+     *     description="JWT Token not found or expired",
+     * ),
+     * @SWG\Response(
+     *     response=404,
+     *     description="Returned when ressource is not found",
+     * ),
+     * @SWG\Response(
+     *     response=500,
+     *     description="Server error",
+     * )
+     * 
+     * @SWG\Tag(name="User")
+     * @Security(name="Bearer")
      */
-    public function create(CompanyRepository $repo, Request $request, EntityManagerInterface $entityManager): response
+    public function create(CompanyRepository $repo, Request $request, EntityManagerInterface $entityManager): Response
     {
         $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
 
@@ -160,8 +201,42 @@ class UserController extends AbstractController
 
     /**
      * @Route("api/users/{id}", name="delete_user", methods="DELETE")
+     * 
+     *   * 
+     * @SWG\Delete(
+     *      description="Remove a user belonging to your company",
+     *      tags = {"User"},
+     * ),
+     * 
+     * @SWG\Parameter(
+     *      name="id",
+     *      in="path",
+     *      description="Id of the user",
+     *      required=true,
+     *      type="integer",
+     * ),
+     * 
+     * @SWG\Response(
+     *     response=200,
+     *     description="User Removed",
+     * ),
+     * @SWG\Response(
+     *     response=401,
+     *     description="JWT Token not found or expired",
+     * ),
+     * @SWG\Response(
+     *     response=404,
+     *     description="Returned when ressource is not found",
+     * ),
+     * @SWG\Response(
+     *     response=500,
+     *     description="Server error",
+     * )
+     * 
+     * @SWG\Tag(name="User")
+     * @Security(name="Bearer")
      */
-    public function delete(User $user, EntityManagerInterface $entityManager, UserRepository $repo)
+    public function delete(User $user, EntityManagerInterface $entityManager, UserRepository $repo): Response
     {
 
         $userValid = $repo->FindUserByCompany(($this->getUser()->getId()), $user->getId());

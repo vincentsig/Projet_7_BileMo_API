@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController
 {
@@ -77,7 +77,6 @@ class UserController extends AbstractController
     public function list(UserRepository $repo, Request $request, Pagination $pagination): Response
     {
         $users = $pagination->findPaginatedList($repo, $request);
-
 
         return new Response(
             $this->serializer->serialize(
@@ -151,7 +150,6 @@ class UserController extends AbstractController
      *      tags = {"User"},
      * ),
      * 
-     * 
      * @SWG\Parameter(
      *          name="Body",
      *          required= true,
@@ -183,9 +181,31 @@ class UserController extends AbstractController
      * @SWG\Tag(name="User")
      * @Security(name="Bearer")
      */
-    public function create(CompanyRepository $repo, Request $request, EntityManagerInterface $entityManager): Response
+    public function create(CompanyRepository $repo, Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
     {
         $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
+
+        $errors = $validator->validate($user);
+
+        if (count($errors)) {
+            $violations = [];
+            foreach ($errors as $violation) {
+
+                $violations[$violation->getPropertyPath()][] = $violation->getMessage();
+            }
+            $data = $this->serializer->serialize(
+                [
+                    'status'            => 400,
+                    'message'           => 'Bad request',
+                    'invalid field(s):' => $violations,
+                ],
+                'json'
+            );
+
+            return new Response($data, 400, [
+                'Content-Type' => 'application/json'
+            ]);
+        }
 
         $user->setCompany($repo->find($this->getUser()->getId()));
         $entityManager->persist($user);
@@ -201,8 +221,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("api/users/{id}", name="delete_user", methods="DELETE")
-     * 
-     *   * 
+     *
      * @SWG\Delete(
      *      description="Remove a user belonging to your company",
      *      tags = {"User"},

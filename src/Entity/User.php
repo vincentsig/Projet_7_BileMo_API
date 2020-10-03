@@ -7,6 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
 use JMS\Serializer\Annotation as Serializer;
 use Hateoas\Configuration\Annotation as Hateoas;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -45,6 +47,8 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
+     * @Assert\Length(min="2", max="100")
      * @Serializer\Expose()
      * @Groups({"list","details"})
      */
@@ -52,6 +56,8 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
+     * @Assert\Length(min="2", max="100")
      * @Serializer\Expose()
      * @Groups({"list","details"})
      */
@@ -59,6 +65,8 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
+     * @Assert\Email(message="This field must be an email address")
      * @Serializer\Expose()
      * @Groups({"details"})
      */
@@ -66,6 +74,8 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
+     * @Assert\Length(min="4", max="12")
      * @Serializer\Expose()
      * @Groups({"details"})
      */
@@ -73,10 +83,10 @@ class User
 
     /**
      * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="users")
+     * @Assert\NotBlank
      * @ORM\JoinColumn(nullable=false)
      * @Serializer\Expose()
      * @Groups({"details"})
-     * 
      * 
      */
     private $company;

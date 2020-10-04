@@ -76,7 +76,10 @@ class UserController extends AbstractController
      */
     public function list(UserRepository $repo, Request $request, Pagination $pagination): Response
     {
-        $users = $pagination->findPaginatedList($repo, $request);
+
+        $company = $this->getUser()->getId();
+
+        $users = $pagination->findPaginatedList($repo, $request, $company);
 
         return new Response(
             $this->serializer->serialize(

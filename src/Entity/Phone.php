@@ -47,8 +47,6 @@ class Phone
      * @ORM\Column(type="string", length=255)
      * @Serializer\Expose()
      * @Groups({"list","details"})
-     * @Assert\NotBlank
-     * @Assert\Length(min="2" max="255")
      * 
      */
     private $name;
@@ -57,8 +55,6 @@ class Phone
      * @ORM\Column(type="string", length=255)
      * @Serializer\Expose()
      * @Groups({"list","details"})
-     * @Assert\NotBlank
-     * @Assert\Length(min="2" max="255")
      */
     private $brand;
 
@@ -66,7 +62,6 @@ class Phone
      * @ORM\Column(type="float")
      * @Serializer\Expose()
      * @Groups({"list","details"})
-     * @Assert\NotBlank
      */
     private $price;
 
@@ -74,7 +69,6 @@ class Phone
      * @ORM\Column(type="integer")
      * @Serializer\Expose()
      * @Groups({"details"})
-     * @Assert\NotBlank
      */
     private $stock;
 
@@ -82,7 +76,6 @@ class Phone
      * @ORM\Column(type="text")
      * @Serializer\Expose()
      * @Groups({"details"}).
-     * @Assert\NotBlank
      */
     private $description;
 

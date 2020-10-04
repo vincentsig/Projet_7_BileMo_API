@@ -118,7 +118,7 @@ class PhoneController extends AbstractController
      * )
      *  @SWG\Tag(name="Phone")
      */
-    public function Details(Phone $phone, Request $request, PhoneRepository $repo): Response
+    public function Details(Phone $phone, PhoneRepository $repo): Response
     {
         $phoneDetails = $repo->find($phone->getId());
         $data = $this->serializer->serialize($phoneDetails, 'json', SerializationContext::create()->setGroups(['list', 'details']));

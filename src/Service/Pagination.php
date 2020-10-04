@@ -12,15 +12,17 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 class Pagination
 {
-    public function findPaginatedList(ServiceEntityRepository $repo, Request $request)
+    public function findPaginatedList(ServiceEntityRepository $repo, Request $request, int $companyId = null)
     {
 
         $page = $request->query->getInt('page', 1);
-        $limit = $request->query->getInt('limit', 5);
+        $limit = $request->query->getInt('limit', 10);
         $route = $request->attributes->get('_route');
 
 
-        $queryBuilder =  $repo->ListQueryBuilder();
+
+        $queryBuilder =  $repo->ListQueryBuilder($companyId);
+
 
         $adapter = new QueryAdapter($queryBuilder);
         $paginator = new Pagerfanta($adapter);

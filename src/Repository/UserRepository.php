@@ -19,9 +19,11 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    public function ListQueryBuilder()
+    public function ListQueryBuilder($companyId)
     {
-        return  $this->createQueryBuilder('u');
+        return  $this->createQueryBuilder('u')
+            ->where('u.company = :companyId')
+            ->setParameters(array('companyId' => $companyId));
     }
 
     public function FindUserByCompany(int $companyId, int $userId)

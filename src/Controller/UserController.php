@@ -29,11 +29,11 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/api/users", name="list_users", methods={"GET"})
+     * @Route("/api/users", name="api_user_list", methods={"GET"})
      * @return Response
      * 
      * @SWG\Get(
-     *     description="Get the list of users.",
+     *     description="Get the paginated list of users.",
      *     tags = {"User"},
      * )
      * 
@@ -93,7 +93,9 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("api/users/{id}", name="details_user", methods={"GET"})
+     * @Route("api/users/{id}", name="api_user_details", methods={"GET"})
+     * @param $id
+     * @return Response
      * 
      * @SWG\Get(
      *      description="Get the details of one user.",
@@ -141,12 +143,13 @@ class UserController extends AbstractController
                 SerializationContext::create()->setGroups(['list', 'details'])
             ),
             200,
-            ['Content-Type' => 'application/json']
+            ['Content-Type' => 'application/hal+json']
         );
     }
 
     /**
-     * @Route("api/users", name="new_user", methods={"POST"})
+     * @Route("api/users", name="api_add_user", methods={"POST"})
+     * @return Response
      * 
      * @SWG\Post(
      *      description="Create a new user",
@@ -219,12 +222,13 @@ class UserController extends AbstractController
             'message' => 'The user has been created'
         ];
 
-        return new Response($this->serializer->serialize($data, 'json'), 201, ['Content-Type' => 'application/json']);
+        return new Response($this->serializer->serialize($data, 'json'), 201, ['Content-Type' => 'application/hal+json']);
     }
 
     /**
-     * @Route("api/users/{id}", name="delete_user", methods="DELETE")
-     *
+     * @Route("api/users/{id}", name="api_remove_user", methods="DELETE")
+     * @return Response
+     * 
      * @SWG\Delete(
      *      description="Remove a user belonging to your company",
      *      tags = {"User"},

@@ -2,6 +2,7 @@
 
 namespace App\EventSubscriber;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -15,10 +16,18 @@ class ExceptionSubscriber implements EventSubscriberInterface
     {
         $exception = $event->getThrowable();
 
+
         if ($exception instanceof \Exception) {
             $data = [
                 'code' => 500,
                 'message' => 'Internal Server Error'
+            ];
+        }
+
+        if ($exception instanceof UniqueConstraintViolationException) {
+            $data = [
+                'code' => '400',
+                'message' => 'Your email exists already',
             ];
         }
 

@@ -80,7 +80,7 @@ class User
     private $lastname;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\NotBlank
      * @Assert\Email(message="This field must be an email address")
      * @Serializer\Expose()

@@ -268,21 +268,28 @@ class UserController extends AbstractController
         $userValid = $repo->FindUserByCompany(($this->getUser()->getId()), $user->getId());
 
         if (!$userValid) {
+
+            $statusCode = 401;
             $data = [
-                'status' => 401,
+                'status' => $statusCode,
                 'message' => 'Invalid user id'
             ];
+        } else {
+            $statusCode = 200;
+            $data = [
+                'status' => $statusCode,
+                'message' => 'The user has been removed'
+            ];
 
-            return new Response($this->serializer->serialize($data, 'json'), 401, ['Content-Type' => 'application/json']);
+            $entityManager->remove($user);
+            $entityManager->flush();
         }
 
-        $entityManager->remove($user);
-        $entityManager->flush();
 
-        $data = [
-            'status' => 200,
-            'message' => 'The user has been removed'
-        ];
+
+
+
+
 
         return new Response($this->serializer->serialize($data, 'json'), 200, ['Content-Type' => 'application/json']);
     }

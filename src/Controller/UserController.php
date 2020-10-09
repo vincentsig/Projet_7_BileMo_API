@@ -15,8 +15,9 @@ use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 
 class UserController extends AbstractController
 {
@@ -53,7 +54,7 @@ class UserController extends AbstractController
      * @SWG\Response(
      *     response=200,
      *     description="Returns the list of users",
-     *           @SWG\Schema(
+     * @SWG\Schema(
      *              type="array",
      *              @SWG\Items(ref=@Model(type=User::class, groups={"list"}))
      *          )
@@ -76,17 +77,11 @@ class UserController extends AbstractController
      */
     public function list(UserRepository $repo, Request $request, Pagination $pagination): Response
     {
-
-        $company = $this->getUser()->getId();
-
-        $users = $pagination->findPaginatedList($repo, $request, $company);
+        //Get the cache request pagination or if it doesnt exist paginate the user list and save it in cache
+        $users = $pagination->GetPaginationOrCache($repo, $request);
 
         return new Response(
-            $this->serializer->serialize(
-                $users,
-                'json',
-                SerializationContext::create()->setGroups(['Default', 'items' => ['list']])
-            ),
+            $this->serializer->serialize($users, 'json', SerializationContext::create()->setGroups(['Default', 'items' => ['list']])),
             200,
             ['Content-Type' => 'application/hal+json']
         );
@@ -137,11 +132,7 @@ class UserController extends AbstractController
     public function details(User $user, UserRepository $repo, Request $request): Response
     {
         return new Response(
-            $this->serializer->serialize(
-                $repo->find($user->getId()),
-                'json',
-                SerializationContext::create()->setGroups(['list', 'details'])
-            ),
+            $this->serializer->serialize($repo->find($user->getId()), 'json', SerializationContext::create()->setGroups(['list', 'details'])),
             200,
             ['Content-Type' => 'application/hal+json']
         );
@@ -162,9 +153,10 @@ class UserController extends AbstractController
      *          in="body",
      *          type="string",
      *          description="All property user to add",
-     *          @SWG\Schema(
+     * @SWG\Schema(
      *              type="array",
-     *              @Model(type=User::class, groups={"details"}))
+     *              @SWG\Items(ref=@Model(type=User::class, groups={"details"}))
+     *            )
      * ),
      *    
      * @SWG\Response(
@@ -284,12 +276,6 @@ class UserController extends AbstractController
             $entityManager->remove($user);
             $entityManager->flush();
         }
-
-
-
-
-
-
 
         return new Response($this->serializer->serialize($data, 'json'), 200, ['Content-Type' => 'application/json']);
     }

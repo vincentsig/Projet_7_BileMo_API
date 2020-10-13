@@ -23,7 +23,9 @@ class UserRepository extends ServiceEntityRepository
     {
         return  $this->createQueryBuilder('u')
             ->where('u.company = :companyId')
-            ->setParameters(array('companyId' => $companyId));
+            ->setParameters([
+                'companyId' => $companyId,
+            ]);
     }
 
     public function FindUserByCompany(int $companyId, int $userId)
@@ -32,8 +34,6 @@ class UserRepository extends ServiceEntityRepository
             ->where('u.company = :companyId')
             ->andWhere('u.id = :userId')
             ->setParameters(array('companyId' => $companyId, 'userId' => $userId));
-
-
         return  $query->getQuery()->getOneOrNullResult();
     }
 

@@ -16,7 +16,6 @@ class ExceptionSubscriber implements EventSubscriberInterface
     {
         $exception = $event->getThrowable();
 
-
         if ($exception instanceof \Exception) {
             $data = [
                 'code' => 500,

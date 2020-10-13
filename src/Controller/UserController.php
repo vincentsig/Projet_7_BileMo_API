@@ -78,7 +78,9 @@ class UserController extends AbstractController
     public function list(UserRepository $repo, Request $request, Pagination $pagination): Response
     {
         //Get the cache request pagination or if it doesnt exist paginate the user list and save it in cache
-        $users = $pagination->GetPaginationOrCache($repo, $request);
+        $queryBuilder =  $repo->listQueryBuilder($this->getUser()->getId());
+
+        $users = $pagination->getPaginationOrCache($queryBuilder, $request);
 
         return new Response(
             $this->serializer->serialize($users, 'json', SerializationContext::create()->setGroups(['Default', 'items' => ['list']])),
@@ -257,7 +259,7 @@ class UserController extends AbstractController
     public function delete(User $user, EntityManagerInterface $entityManager, UserRepository $repo): Response
     {
 
-        $userValid = $repo->FindUserByCompany(($this->getUser()->getId()), $user->getId());
+        $userValid = $repo->findUserByCompany(($this->getUser()->getId()), $user->getId());
 
         if (!$userValid) {
 

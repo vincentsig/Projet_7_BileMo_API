@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use Pagerfanta\Pagerfanta;
+use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -10,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Hateoas\Representation\PaginatedRepresentation;
 use Hateoas\Representation\CollectionRepresentation;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+
 
 class Pagination
 {
@@ -23,29 +24,25 @@ class Pagination
         $this->cache = $cache;
     }
 
-    public function getPaginationOrCache(ServiceEntityRepository $repo, Request $request)
+    public function getPaginationOrCache(QueryBuilder $queryList, Request $request)
     {
-
+        $routeName = $request->attributes->get('_route');
         $companyId = $this->security->getUser()->getId();
-        $page = $request->query->getInt('page', 1);
-        $limit = $request->query->getInt('limit', 10);
+        $page = $request->query->get('page', 1);
+        $limit = $request->query->get('limit', 10);
 
-        $pagination =  $this->cache->get('id-' . $companyId . 'page-' . $page . 'limit-' . $limit, function (ItemInterface $item) use ($request, $repo, $page, $limit, $companyId) {
-            sleep(10);
-            return   $this->findPaginatedList($repo, $request, $page, $limit, $companyId);
+        $pagination =  $this->cache->get($routeName . '-id-' . $companyId . 'page-' . $page . 'limit-' . $limit, function (ItemInterface $item) use ($routeName, $page, $limit, $queryList) {
+            sleep(2);
+            return   $this->findPaginatedList($routeName, $page, $limit, $queryList);
         });
 
         return $pagination;
     }
 
-    private function findPaginatedList(ServiceEntityRepository $repo, Request $request, $page, $limit,  $companyId = 0)
+    private function findPaginatedList($routeName, $page, $limit, QueryBuilder $queryList): PaginatedRepresentation
     {
 
-        $route = $request->attributes->get('_route');
-
-        $queryBuilder =  $repo->ListQueryBuilder($companyId);
-
-        $adapter = new QueryAdapter($queryBuilder);
+        $adapter = new QueryAdapter($queryList);
         $paginator = new Pagerfanta($adapter);
 
         $paginator->setMaxPerPage($limit);
@@ -53,7 +50,7 @@ class Pagination
 
         $paginatedCollection =  new PaginatedRepresentation(
             new CollectionRepresentation($paginator->getCurrentPageResults()),
-            $route,
+            $routeName,
             array(),
             $paginator->getCurrentPage(),
             $paginator->getMaxPerPage(),

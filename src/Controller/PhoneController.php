@@ -68,11 +68,11 @@ class PhoneController extends AbstractController
      * )
      *  @SWG\Tag(name="Phone")
      */
-    public function List(Request $request, PhoneRepository $repo, Pagination $pagination): Response
+    public function list(Request $request, PhoneRepository $repo, Pagination $pagination): Response
     {
 
         //Get the cache request pagination or if it doesnt exist paginate the phone list and save it in cache
-        $phones = $pagination->getPaginationOrCache($repo, $request);
+        $phones = $pagination->getPaginationOrCache($repo->listQueryBuilder(), $request);
 
         $data = $this->serializer->serialize($phones, 'json', SerializationContext::create()->setGroups(['Default', 'items' => ['list']]));
 
@@ -119,9 +119,10 @@ class PhoneController extends AbstractController
      * )
      *  @SWG\Tag(name="Phone")
      */
-    public function Details(Phone $phone, PhoneRepository $repo): Response
+    public function details(Phone $phone, PhoneRepository $repo): Response
     {
-        $phoneDetails = $repo->find($phone->getId());
+        $phoneDetails = $repo->find($phone);
+
         $data = $this->serializer->serialize($phoneDetails, 'json', SerializationContext::create()->setGroups(['list', 'details']));
 
         return new Response($data, 200, ['Content-Type' => 'application/json']);

@@ -2,12 +2,13 @@
 
 namespace App\EventSubscriber;
 
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class ExceptionSubscriber implements EventSubscriberInterface
@@ -36,6 +37,12 @@ class ExceptionSubscriber implements EventSubscriberInterface
                 'message' => 'Bad request'
             ];
         }
+
+        if ($exception instanceof AccessDeniedHttpException)
+            $data = [
+                'code' => '403',
+                'message' => 'Acces Denied'
+            ];
 
         if ($exception instanceof MethodNotAllowedHttpException) {
             $data = [

@@ -131,8 +131,10 @@ class UserController extends AbstractController
      * @SWG\Tag(name="User")
      * @Security(name="Bearer")
      */
-    public function details(User $user, UserRepository $repo, Request $request): Response
+    public function details(User $user, UserRepository $repo): Response
     {
+        $this->denyAccessUnlessGranted('GET_USER', $user);
+
         return new Response(
             $this->serializer->serialize($repo->find($user->getId()), 'json', SerializationContext::create()->setGroups(['list', 'details'])),
             200,
@@ -258,26 +260,15 @@ class UserController extends AbstractController
      */
     public function delete(User $user, EntityManagerInterface $entityManager, UserRepository $repo): Response
     {
+        $this->denyAccessUnlessGranted('DELETE_USER', $user);
 
-        $userValid = $repo->findUserByCompany(($this->getUser()->getId()), $user->getId());
+        $data = [
+            'status' => 200,
+            'message' => 'The user id:' . $user->getId() . ' has been removed'
+        ];
 
-        if (!$userValid) {
-
-            $statusCode = 401;
-            $data = [
-                'status' => $statusCode,
-                'message' => 'Invalid user id'
-            ];
-        } else {
-            $statusCode = 200;
-            $data = [
-                'status' => $statusCode,
-                'message' => 'The user has been removed'
-            ];
-
-            $entityManager->remove($user);
-            $entityManager->flush();
-        }
+        $entityManager->remove($user);
+        $entityManager->flush();
 
         return new Response($this->serializer->serialize($data, 'json'), 200, ['Content-Type' => 'application/json']);
     }

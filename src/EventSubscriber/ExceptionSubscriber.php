@@ -8,6 +8,7 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
@@ -28,6 +29,13 @@ class ExceptionSubscriber implements EventSubscriberInterface
             $data = [
                 'code' => '400',
                 'message' => 'Your email exists already',
+            ];
+        }
+
+        if ($exception instanceof InvalidArgumentException) {
+            $data = [
+                'code' => '400',
+                'message' => $exception->getMessage(),
             ];
         }
 

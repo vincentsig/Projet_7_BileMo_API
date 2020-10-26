@@ -3,8 +3,12 @@
 namespace App\Repository;
 
 use App\Entity\User;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Service\UsersRepresentation;
+use Psr\Cache\CacheItemPoolInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Contracts\Cache\ItemInterface;
+use Hateoas\Representation\CollectionRepresentation;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,21 +18,18 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class UserRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    use AbstractRepository;
+
+    private $doctrineUserCachePool;
+
+    public function __construct(ManagerRegistry $registry, CacheItemPoolInterface $doctrineUserCachePool)
     {
+        $this->doctrineUserCachePool = $doctrineUserCachePool;
+
         parent::__construct($registry, User::class);
     }
 
-    public function ListQueryBuilder($companyId)
-    {
-        return  $this->createQueryBuilder('u')
-            ->where('u.company = :companyId')
-            ->setParameters([
-                'companyId' => $companyId,
-            ]);
-    }
-
-    public function FindUserByCompany(int $companyId, int $userId)
+    public function findUserByCompany(int $companyId, int $userId): UsersRepresentation
     {
         $query = $this->createQueryBuilder('u')
             ->where('u.company = :companyId')
@@ -37,6 +38,52 @@ class UserRepository extends ServiceEntityRepository
         return  $query->getQuery()->getOneOrNullResult();
     }
 
+    /**
+     * @param mixed $request 
+     * @param mixed $companyId 
+     * @return UsersRepresentation 
+     */
+    public function usersPagination($request, $companyId): UsersRepresentation
+    {
+        $routeName = $request->attributes->get('_route');
+        $page = $request->query->get('page', 1);
+        $limit = $request->query->get('limit', 10);
+
+        $paginatedCollection =  $this->doctrineUserCachePool->get('user_list companyId=' . $companyId . 'page=' . $page . ',limit=' . $limit, function (ItemInterface $item) use ($page, $limit, $routeName, $companyId) {
+
+            $query = $this->createQueryBuilder('u')
+                ->where('u.company = :companyId')
+                ->setParameters([
+                    'companyId' => $companyId,
+                ]);
+            $query =  $query->getQuery();
+
+            $paginator =  $this->paginate($query, $page, $limit);
+
+            return   $this->findPaginatedList($paginator, $routeName);
+        });
+
+        return $paginatedCollection;
+    }
+
+    private function findPaginatedList($paginator, $routeName): UsersRepresentation
+    {
+        $paginatedCollection =  new UsersRepresentation(
+            new CollectionRepresentation($paginator->getCurrentPageResults()),
+            $routeName,
+            array(),
+            $paginator->getCurrentPage(),
+            $paginator->getMaxPerPage(),
+            $paginator->getNbPages(),
+            'page',
+            'limit',
+            true,
+            $paginator->getNbResults()
+        );
+        $paginator->getCurrentPageResults();
+
+        return $paginatedCollection;
+    }
     // /**
     //  * @return User[] Returns an array of User objects
     //  */

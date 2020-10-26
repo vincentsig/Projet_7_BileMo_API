@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Company;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -18,19 +19,16 @@ class CompanyVoter extends Voter
     {
         $company = $token->getUser();
 
-        if (!$company instanceof UserInterface) {
+        if (!$company instanceof Company) {
             return false;
         }
 
         switch ($attribute) {
             case 'GET_USER':
-                return $user->getCompany()->getid() == $company->getId();
+                return $user->getCompany() == $company;
 
-                break;
             case 'DELETE_USER':
-                return $user->getCompany()->getid() == $company->getId();
-
-                break;
+                return $user->getCompany() == $company;
         }
 
         return false;

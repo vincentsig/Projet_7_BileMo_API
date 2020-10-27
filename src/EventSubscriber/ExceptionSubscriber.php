@@ -18,7 +18,7 @@ class ExceptionSubscriber implements EventSubscriberInterface
     public function onKernelException(ExceptionEvent $event)
     {
         $exception = $event->getThrowable();
-        dd($exception);
+
         if ($exception instanceof \Exception) {
             $data = [
                 'code' => 500,

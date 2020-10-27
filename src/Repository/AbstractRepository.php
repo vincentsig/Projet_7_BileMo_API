@@ -26,6 +26,6 @@ trait AbstractRepository
         if ((is_numeric($page)) && is_numeric($limit)) {
             return true;
         }
-        throw new InvalidArgumentException('The page or the limit are not numeric');
+        throw new InvalidArgumentException('Bad Request: The page and the limit parameters must be numeric');
     }
 }

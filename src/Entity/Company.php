@@ -2,17 +2,22 @@
 
 namespace App\Entity;
 
-use App\Repository\CompanyRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
-use JMS\Serializer\Annotation as Serializer;
+use App\Repository\CompanyRepository;
 use JMS\Serializer\Annotation\Groups;
+use Doctrine\Common\Collections\Collection;
+use JMS\Serializer\Annotation as Serializer;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=CompanyRepository::class)
  * @Serializer\ExclusionPolicy("all")
+ * @UniqueEntity(
+ * fields={"email"},
+ *     message="Your E-Mail adress has already been registered"
+ * )
  */
 class Company implements UserInterface
 {

@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\User;
 use Swagger\Annotations as SWG;
 use App\Repository\UserRepository;
-use App\Repository\CompanyRepository;
 use Psr\Cache\CacheItemPoolInterface;
 use JMS\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use AppBundle\Exception\ResourceValidationException;
 
 
 class UserController extends AbstractController
@@ -34,7 +34,7 @@ class UserController extends AbstractController
      * @return Response
      * 
      * @SWG\Get(
-     *     description="Get the paginated list of users.",
+     *     description="Get the paginated list of users corresponding to the company.",
      *     tags = {"User"},
      * )
      * 
@@ -53,23 +53,31 @@ class UserController extends AbstractController
      * 
      * @SWG\Response(
      *     response=200,
-     *     description="Returns the list of users",
-     * @SWG\Schema(
-     *              type="array",
-     *              @SWG\Items(ref=@Model(type=User::class, groups={"list"}))
-     *          )
+     *     description="OK: Returns the paginated list of users",
+     *              @SWG\Schema(
+     *                  type="array",
+     *                  @SWG\Items(ref=@Model(type=User::class, groups={"list"}))
+     *              )
+     * ),
+     * @SWG\Response(
+     *     response=400,
+     *     description="Bad Request: Returned when the page and/or the limit parameter for the pagination are not numeric",
      * ),
      * @SWG\Response(
      *     response=401,
-     *     description="JWT Token not found or expired",
+     *     description="Unauthorized: Returned when the JWT Token is not found or expired",
      * ),
      * @SWG\Response(
      *     response=404,
-     *     description="Returned when ressource is not found",
+     *     description="Resource Not Found: Returned when the route is invalid",
+     * ),
+     * @SWG\Response(
+     *     response=405,
+     *     description="Method not allowed: Returned when the HTTP method used is not valid on this endpoint",
      * ),
      * @SWG\Response(
      *     response=500,
-     *     description="Server error",
+     *     description="Internal Server error: Returned when there is an Internal Server error",
      * )
      * 
      * @SWG\Tag(name="User")
@@ -107,23 +115,31 @@ class UserController extends AbstractController
      * 
      * @SWG\Response(
      *     response=200,
-     *     description="Returns the details of users",
-     * @SWG\Schema(
+     *     description="OK: Returns the details one user",
+     *           @SWG\Schema(
      *              type="array",
-     *              @SWG\Items(ref=@Model(type=User::class, groups={"list","details"}))
+     *              @SWG\Items(ref=@Model(type=User::class, groups={"details"}))
      *          )
      * ),
      * @SWG\Response(
      *     response=401,
-     *     description="JWT Token not found or expired",
+     *     description="Unauthorized: Returned when the JWT Token is not found or expired",
+     * )
+     * @SWG\Response(
+     *     response=403,
+     *     description="Acces Denied: Returned when you don't have acces to a ressource",
      * ),
      * @SWG\Response(
      *     response=404,
-     *     description="Returned when ressource is not found",
+     *     description="Resource Not Found: Returned when the ressource is not founds or the route is invalid",
+     * ),
+     * @SWG\Response(
+     *     response=405,
+     *     description="Method not allowed: Returned when the HTTP method used is not valid on this endpoint",
      * ),
      * @SWG\Response(
      *     response=500,
-     *     description="Server error",
+     *     description="Internal Server error: Returned when there is an Internal Server error",
      * )
      * 
      * @SWG\Tag(name="User")
@@ -163,19 +179,19 @@ class UserController extends AbstractController
      *    
      * @SWG\Response(
      *     response=200,
-     *     description="User created",
+     *     description="OK: The user has been created",
      * ),
      * @SWG\Response(
      *     response=401,
-     *     description="JWT Token not found or expired",
+     *     description="Unauthorized: Returned when the JWT Token is not found or expired",
      * ),
-     * @SWG\Response(
-     *     response=404,
-     *     description="Returned when ressource is not found",
+     *@SWG\Response(
+     *     response=405,
+     *     description="Method not allowed: Returned when the HTTP method used is not valid on this endpoint",
      * ),
      * @SWG\Response(
      *     response=500,
-     *     description="Server error",
+     *     description="Internal Server error: Returned when there is an Internal Server error",
      * )
      * 
      * @SWG\Tag(name="User")
@@ -193,18 +209,15 @@ class UserController extends AbstractController
 
                 $violations[$violation->getPropertyPath()][] = $violation->getMessage();
             }
+
             $data = $this->serializer->serialize(
                 [
-                    'status'            => 400,
-                    'message'           => 'Bad request',
-                    'invalid field(s):' => $violations,
+                    $violations,
                 ],
                 'json'
             );
 
-            return new Response($data, 400, [
-                'Content-Type' => 'application/json'
-            ]);
+            throw new ResourceValidationException($data, null, 400);
         }
 
         $user->setCompany($this->getUser());
@@ -238,19 +251,23 @@ class UserController extends AbstractController
      * 
      * @SWG\Response(
      *     response=200,
-     *     description="User Removed",
+     *     description="OK: The user has been removed",
      * ),
      * @SWG\Response(
      *     response=401,
-     *     description="JWT Token not found or expired",
+     *     description="Unauthorized: Returned when the JWT Token is not found or expired",
+     * ),
+     * @SWG\Response(
+     *     response=403,
+     *     description="Acces Denied: Returned when you don't have acces to a ressource",
      * ),
      * @SWG\Response(
      *     response=404,
-     *     description="Returned when ressource is not found",
+     *     description="Resource Not Found: Returned when the ressource is not founds or the route is invalid",
      * ),
      * @SWG\Response(
      *     response=500,
-     *     description="Server error",
+     *     description="Internal Server error: Returned when there is an Internal Server error",
      * )
      * 
      * @SWG\Tag(name="User")
@@ -261,13 +278,13 @@ class UserController extends AbstractController
         $this->denyAccessUnlessGranted('DELETE_USER', $user);
 
         $data = [
-            'status' => 204,
+            'status' => 200,
             'message' => 'The user id:' . $user->getId() . ' has been removed'
         ];
 
         $entityManager->remove($user);
         $entityManager->flush();
 
-        return new Response($this->serializer->serialize($data, 'json'), 204, ['Content-Type' => 'application/json']);
+        return new Response($this->serializer->serialize($data, 'json'), 200, ['Content-Type' => 'application/json']);
     }
 }

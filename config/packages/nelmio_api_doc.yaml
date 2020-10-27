@@ -18,3 +18,12 @@ nelmio_api_doc:
     areas: # to filter documented areas
         path_patterns:
             - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+
+    models:
+        names:
+            - { alias: Phone_list,  type: App\Entity\Phone, groups: [list] }
+            - { alias: Phone_details,  type: App\Entity\Phone, groups: [details] }
+            - { alias: User_list,  type: App\Entity\User, groups: [list] }
+            - { alias: User_details,  type: App\Entity\User, groups: [details] }
+    
+            

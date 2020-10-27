@@ -8,11 +8,17 @@ use JMS\Serializer\Annotation\Groups;
 use JMS\Serializer\Annotation as Serializer;
 use Hateoas\Configuration\Annotation as Hateoas;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @Serializer\ExclusionPolicy("all")
+ * @UniqueEntity(
+ * fields={"email"},
+ *     message="Your E-Mail adress has already been registered"
+ * )
  * 
  * @Hateoas\Relation(
  *      "Self",

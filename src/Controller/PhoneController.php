@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Phone;
-use App\Service\Pagination;
 use Swagger\Annotations as SWG;
 use App\Repository\PhoneRepository;
 use JMS\Serializer\SerializerInterface;
@@ -12,6 +11,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
@@ -55,18 +55,27 @@ class PhoneController extends AbstractController
      *          )
      * ),
      * @SWG\Response(
+     *     response=400,
+     *     description="Bad Request: Returned when the page and/or the limit parameter for the pagination are not numeric",
+     * ),
+     * @SWG\Response(
      *     response=401,
-     *     description="JWT Token not found or expired",
+     *     description="Unauthorized: Returned when the JWT Token is not found or expired",
      * ),
      * @SWG\Response(
      *     response=404,
-     *     description="Returned when ressource is not found"
-     * )
+     *     description="Resource Not Found: Returned when the route is invalid",
+     * ),
+     * @SWG\Response(
+     *     response=405,
+     *     description="Method not allowed: Returned when the HTTP method used is not valid on this endpoint",
+     * ),
      * @SWG\Response(
      *     response=500,
-     *     description="Server error",
+     *     description="Internal Server error: Returned when there is an Internal Server error",
      * )
-     *  @SWG\Tag(name="Phone")
+     * @SWG\Tag(name="Phone")
+     * @Security(name="Bearer")
      */
     public function list(Request $request, PhoneRepository $repo): Response
     {
@@ -106,19 +115,24 @@ class PhoneController extends AbstractController
      * )
      * @SWG\Response(
      *     response=401,
-     *     description="JWT Token not found or expired",
+     *     description="Unauthorized: Returned when the JWT Token is not found or expired",
      * ),
      * @SWG\Response(
      *     response=404,
-     *     description="Returned when ressource is not found"
-     * )
+     *     description="Resource Not Found: Returned when the route is invalid",
+     * ),
+     * @SWG\Response(
+     *     response=405,
+     *     description="Method not allowed: Returned when the HTTP method used is not valid on this endpoint",
+     * ),
      * @SWG\Response(
      *     response=500,
-     *     description="Server error",
+     *     description="Internal Server error: Returned when there is an Internal Server error",
      * )
      *  @SWG\Tag(name="Phone")
+     *  @Security(name="Bearer")
      */
-    public function details(Phone $phone, PhoneRepository $repo): Response
+    public function details(Phone $phone): Response
     {
 
         $data = $this->serializer->serialize($phone, 'json', SerializationContext::create()->setGroups(['list', 'details']));

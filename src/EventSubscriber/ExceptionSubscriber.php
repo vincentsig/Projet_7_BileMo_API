@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
+use AppBundle\Exception\ResourceValidationException;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -17,7 +18,7 @@ class ExceptionSubscriber implements EventSubscriberInterface
     public function onKernelException(ExceptionEvent $event)
     {
         $exception = $event->getThrowable();
-
+        dd($exception);
         if ($exception instanceof \Exception) {
             $data = [
                 'code' => 500,
@@ -25,43 +26,46 @@ class ExceptionSubscriber implements EventSubscriberInterface
             ];
         }
 
-        if ($exception instanceof UniqueConstraintViolationException) {
-            $data = [
-                'code' => '400',
-                'message' => 'Your email exists already',
-            ];
-        }
-
         if ($exception instanceof InvalidArgumentException) {
             $data = [
-                'code' => '400',
+                'code' => 400,
                 'message' => $exception->getMessage(),
             ];
         }
 
         if ($exception instanceof BadRequestHttpException) {
             $data = [
-                'code' => '400',
+                'code' => $exception->getStatusCode(),
                 'message' => 'Bad request'
+            ];
+        }
+
+        if ($exception instanceof ResourceValidationException) {
+
+            $fields = json_decode($exception->getMessage());
+            $data = [
+                'code' => $exception->getStatusCode(),
+                'message' => 'The JSON sent contains invalid data',
+                'invalid data: ' => $fields,
             ];
         }
 
         if ($exception instanceof AccessDeniedHttpException)
             $data = [
-                'code' => '403',
+                'code' => $exception->getStatusCode(),
                 'message' => 'Acces Denied'
             ];
 
         if ($exception instanceof MethodNotAllowedHttpException) {
             $data = [
-                'code' => '405',
+                'code' => $exception->getStatusCode(),
                 'message' => 'Method not allowed'
             ];
         }
 
         if ($exception instanceof NotFoundHttpException) {
             $data = [
-                'status' => $exception->getStatusCode(),
+                'code' => $exception->getStatusCode(),
                 'message' => 'Resource not found'
             ];
         }

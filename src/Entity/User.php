@@ -15,26 +15,40 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @Serializer\ExclusionPolicy("all")
  * 
  * @Hateoas\Relation(
- *    "self",
- *    href = @Hateoas\Route(
- *        "list_users",
- *        absolute = true
+ *      "Self",
+ *          href = @Hateoas\Route(
+ *          "api_user_details",
+ *          parameters = {
+ *              "id" = "expr(object.getId())"
+ *           },
+ *          absolute = true
  *    ),
- *     exclusion = @Hateoas\Exclusion(groups={"list"})
+ *      attributes={"method"="GET"},
+ *      exclusion = @Hateoas\Exclusion(groups={"details", "list"})
  * )
  * 
  * @Hateoas\Relation(
- *    "detail",
- *    href = @Hateoas\Route(
- *        "details_user",
- * parameters = {
- *             "id" = "expr(object.getId())"
- *             },
- *        absolute = true
+ *      "Users list",
+ *          href = @Hateoas\Route(
+ *          "api_user_list",
+ *          absolute = true
  *    ),
- *     exclusion = @Hateoas\Exclusion(groups={"list","detail"})
+ *      attributes={"method"="GET"},
+ *      exclusion = @Hateoas\Exclusion(groups={"details"})
  * )
  * 
+ * @Hateoas\Relation(
+ *      "Remove user",
+ *          href = @Hateoas\Route(
+ *          "api_remove_user",
+ *          parameters = {
+ *              "id" = "expr(object.getId())"
+ *           },
+ *          absolute = true
+ *    ),
+ *      attributes={"method"="DELETE"},
+ *      exclusion = @Hateoas\Exclusion(groups={"details", "list"})
+ * )
  */
 class User
 {
@@ -42,6 +56,8 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Serializer\Expose()
+     * @Groups({"list"})
      */
     private $id;
 
@@ -50,7 +66,7 @@ class User
      * @Assert\NotBlank
      * @Assert\Length(min="2", max="100")
      * @Serializer\Expose()
-     * @Groups({"list","details"})
+     * @Groups({"list", "details"})
      */
     private $firstname;
 
@@ -64,7 +80,7 @@ class User
     private $lastname;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\NotBlank
      * @Assert\Email(message="This field must be an email address")
      * @Serializer\Expose()
@@ -83,11 +99,7 @@ class User
 
     /**
      * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="users")
-     * @Assert\NotBlank
      * @ORM\JoinColumn(nullable=false)
-     * @Serializer\Expose()
-     * @Groups({"details"})
-     * 
      */
     private $company;
 

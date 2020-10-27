@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Service\Pagination;
 use Swagger\Annotations as SWG;
 use App\Repository\UserRepository;
 use App\Repository\CompanyRepository;
+use Psr\Cache\CacheItemPoolInterface;
 use JMS\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
@@ -15,8 +15,9 @@ use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 
 class UserController extends AbstractController
 {
@@ -29,11 +30,11 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/api/users", name="list_users", methods={"GET"})
+     * @Route("/api/users", name="api_user_list", methods={"GET"})
      * @return Response
      * 
      * @SWG\Get(
-     *     description="Get the list of users.",
+     *     description="Get the paginated list of users.",
      *     tags = {"User"},
      * )
      * 
@@ -53,7 +54,7 @@ class UserController extends AbstractController
      * @SWG\Response(
      *     response=200,
      *     description="Returns the list of users",
-     *           @SWG\Schema(
+     * @SWG\Schema(
      *              type="array",
      *              @SWG\Items(ref=@Model(type=User::class, groups={"list"}))
      *          )
@@ -74,23 +75,22 @@ class UserController extends AbstractController
      * @SWG\Tag(name="User")
      * @Security(name="Bearer")
      */
-    public function list(UserRepository $repo, Request $request, Pagination $pagination): Response
+    public function list(UserRepository $repo, Request $request, CacheItemPoolInterface $doctrineUserCachePool): Response
     {
-        $users = $pagination->findPaginatedList($repo, $request);
+        //Get the cache request pagination or if it doesnt exist paginate the user list and save it in cache
+        $users =  $repo->usersPagination($request, $this->getUser()->getId());
 
         return new Response(
-            $this->serializer->serialize(
-                $users,
-                'json',
-                SerializationContext::create()->setGroups(['Default', 'items' => ['list']])
-            ),
+            $this->serializer->serialize($users, 'json', SerializationContext::create()->setGroups(['Default', 'items' => ['list']])),
             200,
             ['Content-Type' => 'application/hal+json']
         );
     }
 
     /**
-     * @Route("api/users/{id}", name="details_user", methods={"GET"})
+     * @Route("api/users/{id}", name="api_user_details", methods={"GET"})
+     * @param $id
+     * @return Response
      * 
      * @SWG\Get(
      *      description="Get the details of one user.",
@@ -129,21 +129,20 @@ class UserController extends AbstractController
      * @SWG\Tag(name="User")
      * @Security(name="Bearer")
      */
-    public function details(User $user, UserRepository $repo, Request $request): Response
+    public function details(User $user): Response
     {
+        $this->denyAccessUnlessGranted('GET_USER', $user);
+
         return new Response(
-            $this->serializer->serialize(
-                $repo->find($user->getId()),
-                'json',
-                SerializationContext::create()->setGroups(['list', 'details'])
-            ),
+            $this->serializer->serialize($user, 'json', SerializationContext::create()->setGroups(['list', 'details'])),
             200,
-            ['Content-Type' => 'application/json']
+            ['Content-Type' => 'application/hal+json']
         );
     }
 
     /**
-     * @Route("api/users", name="new_user", methods={"POST"})
+     * @Route("api/users", name="api_add_user", methods={"POST"})
+     * @return Response
      * 
      * @SWG\Post(
      *      description="Create a new user",
@@ -156,9 +155,10 @@ class UserController extends AbstractController
      *          in="body",
      *          type="string",
      *          description="All property user to add",
-     *          @SWG\Schema(
+     * @SWG\Schema(
      *              type="array",
-     *              @Model(type=User::class, groups={"details"}))
+     *              @SWG\Items(ref=@Model(type=User::class, groups={"details"}))
+     *            )
      * ),
      *    
      * @SWG\Response(
@@ -181,7 +181,7 @@ class UserController extends AbstractController
      * @SWG\Tag(name="User")
      * @Security(name="Bearer")
      */
-    public function create(CompanyRepository $repo, Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
+    public function create(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
     {
         $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
 
@@ -207,7 +207,7 @@ class UserController extends AbstractController
             ]);
         }
 
-        $user->setCompany($repo->find($this->getUser()->getId()));
+        $user->setCompany($this->getUser());
         $entityManager->persist($user);
         $entityManager->flush();
 
@@ -216,12 +216,13 @@ class UserController extends AbstractController
             'message' => 'The user has been created'
         ];
 
-        return new Response($this->serializer->serialize($data, 'json'), 201, ['Content-Type' => 'application/json']);
+        return new Response($this->serializer->serialize($data, 'json'), 201, ['Content-Type' => 'application/hal+json']);
     }
 
     /**
-     * @Route("api/users/{id}", name="delete_user", methods="DELETE")
-     *
+     * @Route("api/users/{id}", name="api_remove_user", methods="DELETE")
+     * @return Response
+     * 
      * @SWG\Delete(
      *      description="Remove a user belonging to your company",
      *      tags = {"User"},
@@ -255,28 +256,18 @@ class UserController extends AbstractController
      * @SWG\Tag(name="User")
      * @Security(name="Bearer")
      */
-    public function delete(User $user, EntityManagerInterface $entityManager, UserRepository $repo): Response
+    public function delete(User $user, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('DELETE_USER', $user);
 
-        $userValid = $repo->FindUserByCompany(($this->getUser()->getId()), $user->getId());
-
-        if (!$userValid) {
-            $data = [
-                'status' => 401,
-                'message' => 'Invalid user id'
-            ];
-
-            return new Response($this->serializer->serialize($data, 'json'), 401, ['Content-Type' => 'application/json']);
-        }
+        $data = [
+            'status' => 204,
+            'message' => 'The user id:' . $user->getId() . ' has been removed'
+        ];
 
         $entityManager->remove($user);
         $entityManager->flush();
 
-        $data = [
-            'status' => 200,
-            'message' => 'The user has been removed'
-        ];
-
-        return new Response($this->serializer->serialize($data, 'json'), 200, ['Content-Type' => 'application/json']);
+        return new Response($this->serializer->serialize($data, 'json'), 204, ['Content-Type' => 'application/json']);
     }
 }

@@ -16,3 +16,13 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+        
+        metadata_cache_driver: ~
+
+        query_cache_driver:
+            type: pool
+            id: doctrine.user_cache_pool
+
+        result_cache_driver:
+            type: pool
+            id: doctrine.phone_cache_pool

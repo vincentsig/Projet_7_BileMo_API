@@ -49,11 +49,11 @@ class PhoneController extends AbstractController
      * @SWG\Response(
      *     response=200,
      *     description="Returns list of all phones",
-     *          @SWG\Schema(
+     * @SWG\Schema(
      *              type="array",
      *              @SWG\Items(ref=@Model(type=Phone::class, groups={"list"}))
      *          )
-     * )
+     * ),
      * @SWG\Response(
      *     response=401,
      *     description="JWT Token not found or expired",
@@ -68,10 +68,10 @@ class PhoneController extends AbstractController
      * )
      *  @SWG\Tag(name="Phone")
      */
-    public function List(Request $request, PhoneRepository $repo, Pagination $pagination): Response
+    public function list(Request $request, PhoneRepository $repo): Response
     {
-
-        $phones = $pagination->findPaginatedList($repo, $request);
+        //Get the cache request pagination or if it doesnt exist paginate the phone list and save it in cache
+        $phones = $repo->phonePagination($request);
 
         $data = $this->serializer->serialize($phones, 'json', SerializationContext::create()->setGroups(['Default', 'items' => ['list']]));
 
@@ -118,10 +118,10 @@ class PhoneController extends AbstractController
      * )
      *  @SWG\Tag(name="Phone")
      */
-    public function Details(Phone $phone, Request $request, PhoneRepository $repo): Response
+    public function details(Phone $phone, PhoneRepository $repo): Response
     {
-        $phoneDetails = $repo->find($phone->getId());
-        $data = $this->serializer->serialize($phoneDetails, 'json', SerializationContext::create()->setGroups(['list', 'details']));
+
+        $data = $this->serializer->serialize($phone, 'json', SerializationContext::create()->setGroups(['list', 'details']));
 
         return new Response($data, 200, ['Content-Type' => 'application/json']);
     }

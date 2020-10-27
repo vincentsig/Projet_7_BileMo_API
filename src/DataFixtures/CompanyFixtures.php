@@ -34,7 +34,7 @@ class CompanyFixtures extends Fixture
             $company->setEmail($faker->email());
             $company->setPassword($this->encoder->encodePassword($company, '12345'));
             $company->setName($listCompanies[$i]);
-            $company->setPhone($faker->phoneNumber());
+            $company->setPhoneNumber($faker->phoneNumber());
 
             $this->addReference('company-' . $i, $company);
             $manager->persist($company);

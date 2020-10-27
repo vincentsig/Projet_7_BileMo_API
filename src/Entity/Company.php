@@ -51,7 +51,7 @@ class Company implements UserInterface
      * @ORM\Column(type="string", length=255)
      * @Serializer\Expose()
      */
-    private $phone;
+    private $phone_number;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="company", orphanRemoval=true)
@@ -104,14 +104,14 @@ class Company implements UserInterface
         return $this;
     }
 
-    public function getPhone(): ?string
+    public function getPhoneNumber(): ?string
     {
-        return $this->phone;
+        return $this->phone_number;
     }
 
-    public function setPhone(string $phone): self
+    public function setPhoneNumber(string $phone_number): self
     {
-        $this->phone = $phone;
+        $this->phone_number = $phone_number;
 
         return $this;
     }

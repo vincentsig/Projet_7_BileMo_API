@@ -101,7 +101,7 @@ class User
      * @Serializer\Expose()
      * @Groups({"details"})
      */
-    private $phone;
+    private $phone_number;
 
     /**
      * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="users")
@@ -150,14 +150,14 @@ class User
         return $this;
     }
 
-    public function getPhone(): ?string
+    public function getPhoneNumber(): ?string
     {
-        return $this->phone;
+        return $this->phone_number;
     }
 
-    public function setPhone(string $phone): self
+    public function setPhoneNumber(string $phone_number): self
     {
-        $this->phone = $phone;
+        $this->phone_number = $phone_number;
 
         return $this;
     }

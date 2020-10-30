@@ -5,7 +5,6 @@ namespace App\EventSubscriber;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Exception\ResourceValidationException;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;

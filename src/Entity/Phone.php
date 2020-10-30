@@ -7,13 +7,12 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PhoneRepository;
 use JMS\Serializer\Annotation\Groups;
 use JMS\Serializer\Annotation as Serializer;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PhoneRepository::class)
  * @Serializer\ExclusionPolicy("all")
  * 
- *  * @Hateoas\Relation(
+ * @Hateoas\Relation(
  *      name = "self",
  *      href = @Hateoas\Route(
  *         "details_phone",

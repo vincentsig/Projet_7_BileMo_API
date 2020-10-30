@@ -3,12 +3,15 @@
 namespace App\Repository;
 
 use App\Entity\User;
-use App\Service\UsersRepresentation;
+use Pagerfanta\Pagerfanta;
+use App\Representation\UsersRepresentation;
 use Psr\Cache\CacheItemPoolInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Hateoas\Representation\CollectionRepresentation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use LogicException;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -22,6 +25,12 @@ class UserRepository extends ServiceEntityRepository
 
     private $doctrineUserCachePool;
 
+    /**
+     * @param ManagerRegistry $registry 
+     * @param CacheItemPoolInterface $doctrineUserCachePool 
+     * @return void 
+     * @throws LogicException 
+     */
     public function __construct(ManagerRegistry $registry, CacheItemPoolInterface $doctrineUserCachePool)
     {
         $this->doctrineUserCachePool = $doctrineUserCachePool;
@@ -29,21 +38,12 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    public function findUserByCompany(int $companyId, int $userId): UsersRepresentation
-    {
-        $query = $this->createQueryBuilder('u')
-            ->where('u.company = :companyId')
-            ->andWhere('u.id = :userId')
-            ->setParameters(array('companyId' => $companyId, 'userId' => $userId));
-        return  $query->getQuery()->getOneOrNullResult();
-    }
-
     /**
-     * @param mixed $request 
-     * @param mixed $companyId 
+     * @param Request $request 
+     * @param int $companyId 
      * @return UsersRepresentation 
      */
-    public function usersPagination($request, $companyId): UsersRepresentation
+    public function usersPagination(Request $request, int $companyId): UsersRepresentation
     {
         $routeName = $request->attributes->get('_route');
         $page = $request->query->get('page', 1);
@@ -66,7 +66,12 @@ class UserRepository extends ServiceEntityRepository
         return $paginatedCollection;
     }
 
-    private function findPaginatedList($paginator, $routeName): UsersRepresentation
+    /**
+     * @param Pagerfanta $paginator 
+     * @param string $routeName 
+     * @return UsersRepresentation 
+     */
+    private function findPaginatedList(Pagerfanta $paginator, string $routeName): UsersRepresentation
     {
         $paginatedCollection =  new UsersRepresentation(
             new CollectionRepresentation($paginator->getCurrentPageResults()),

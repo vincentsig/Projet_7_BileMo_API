@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\User;
 use Swagger\Annotations as SWG;
 use App\Repository\UserRepository;
-use Psr\Cache\CacheItemPoolInterface;
 use JMS\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
@@ -22,6 +21,7 @@ use AppBundle\Exception\ResourceValidationException;
 class UserController extends AbstractController
 {
 
+
     private $serializer;
 
     public function __construct(SerializerInterface $serializer)
@@ -32,6 +32,8 @@ class UserController extends AbstractController
     /**
      * @Route("/api/users", name="api_user_list", methods={"GET"})
      * @return Response
+     * @param UserRepository $repo
+     * @param Request $request
      * 
      * @SWG\Get(
      *     description="Get the paginated list of users corresponding to the company.",
@@ -83,7 +85,7 @@ class UserController extends AbstractController
      * @SWG\Tag(name="User")
      * @Security(name="Bearer")
      */
-    public function list(UserRepository $repo, Request $request, CacheItemPoolInterface $doctrineUserCachePool): Response
+    public function list(UserRepository $repo, Request $request): Response
     {
         //Get the cache request pagination or if it doesnt exist paginate the user list and save it in cache
         $users =  $repo->usersPagination($request, $this->getUser()->getId());
@@ -96,9 +98,10 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("api/users/{id}", name="api_user_details", methods={"GET"})
-     * @param $id
+     * @param User $user
      * @return Response
+     * 
+     * @Route("api/users/{id}", name="api_user_details", methods={"GET"})
      * 
      * @SWG\Get(
      *      description="Get the details of one user.",
@@ -157,8 +160,12 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("api/users", name="api_add_user", methods={"POST"})
      * @return Response
+     * @param EntityManagerInterface $entityManager
+     * @param ValidatorInterface $validator
+     * 
+     * @Route("api/users", name="api_add_user", methods={"POST"})
+     *
      * 
      * @SWG\Post(
      *      description="Create a new user",
@@ -233,8 +240,13 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("api/users/{id}", name="api_remove_user", methods="DELETE")
      * @return Response
+     * @param User $user
+     * @param EntityManagerInterface $entityManager
+     * 
+     * 
+     * @Route("api/users/{id}", name="api_remove_user", methods="DELETE")
+     * 
      * 
      * @SWG\Delete(
      *      description="Remove a user belonging to your company",

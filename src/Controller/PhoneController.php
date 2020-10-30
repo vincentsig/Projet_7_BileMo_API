@@ -25,8 +25,11 @@ class PhoneController extends AbstractController
     }
 
     /**
-     * @Route ("api/phones", name = "list_phones", methods={"GET"})
      * @return Response
+     * @param Request $request
+     * @param PhoneRepository $repo
+     * 
+     * @Route ("api/phones", name = "list_phones", methods={"GET"})
      * 
      * @SWG\Get(
      *      description="Endpoint for the list of all the phones",
@@ -88,9 +91,10 @@ class PhoneController extends AbstractController
     }
 
     /**
-     * @Route ("api/phones/{id}", name = "details_phone", methods = {"GET"})
-     * @param $id
+     * @param Phone $phone
      * @return Response
+     * 
+     * @Route ("api/phones/{id}", name = "details_phone", methods = {"GET"})
      * 
      * @SWG\Get(
      *      description="Endpoint for the details of a specific phone",

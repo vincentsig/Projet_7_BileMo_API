@@ -14,6 +14,7 @@ use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class ExceptionSubscriber implements EventSubscriberInterface
 {
+
     public function onKernelException(ExceptionEvent $event)
     {
         $exception = $event->getThrowable();

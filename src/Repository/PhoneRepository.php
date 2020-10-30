@@ -2,14 +2,16 @@
 
 namespace App\Repository;
 
+use LogicException;
 use App\Entity\Phone;
+use Pagerfanta\Pagerfanta;
 use Psr\Cache\CacheItemPoolInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Hateoas\Representation\PaginatedRepresentation;
 use Hateoas\Representation\CollectionRepresentation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Pagerfanta\Pagerfanta;
 
 /**
  * @method Phone|null find($id, $lockMode = null, $lockVersion = null)
@@ -23,6 +25,12 @@ class PhoneRepository extends ServiceEntityRepository
 
     private $doctrinePhoneCachePool;
 
+    /**
+     * @param ManagerRegistry $registry 
+     * @param CacheItemPoolInterface $doctrinePhoneCachePool 
+     * @return void 
+     * @throws LogicException 
+     */
     public function __construct(ManagerRegistry $registry, CacheItemPoolInterface $doctrinePhoneCachePool)
     {
         $this->doctrinePhoneCachePool = $doctrinePhoneCachePool;
@@ -30,7 +38,11 @@ class PhoneRepository extends ServiceEntityRepository
         parent::__construct($registry, Phone::class);
     }
 
-    public function phonePagination($request): PaginatedRepresentation
+    /**
+     * @param Request $request 
+     * @return PaginatedRepresentation 
+     */
+    public function phonePagination(Request $request): PaginatedRepresentation
     {
         $routeName = $request->attributes->get('_route');
         $page = $request->query->get('page', 1);
@@ -49,7 +61,12 @@ class PhoneRepository extends ServiceEntityRepository
         return $paginatedCollection;
     }
 
-    private function findPaginatedList($paginator, $routeName): PaginatedRepresentation
+    /**
+     * @param Pagerfanta $paginator 
+     * @param string $routeName 
+     * @return PaginatedRepresentation 
+     */
+    private function findPaginatedList(PagerFanta $paginator, string $routeName): PaginatedRepresentation
     {
         $paginatedCollection =  new PaginatedRepresentation(
             new CollectionRepresentation($paginator->getCurrentPageResults()),

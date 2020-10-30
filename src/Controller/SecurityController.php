@@ -11,6 +11,7 @@ use Swagger\Annotations as SWG;
 class SecurityController extends AbstractController
 {
     /**
+     * lexik_jwt authentication (see the configuration)
      * @Route("/api/login_check", name="login", methods={"POST"})
      * 
      * @SWG\Post(
@@ -61,7 +62,5 @@ class SecurityController extends AbstractController
      */
     public function login()
     {
-        // lexik_jwt authentication (see the configuration)
-
     }
 }

@@ -84,7 +84,7 @@ These are the main constraints for this project:
 
       curl -X POST -H "Content-Type: application/json" http://127.0.0.1:8000/api/login_check -d '{"username":"user.test@gmail.com","password":"12345"}'
 
-## Documentation**
+## Documentation
 
       The documentation is available on /api/doc
 

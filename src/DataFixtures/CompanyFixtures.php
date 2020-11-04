@@ -38,8 +38,17 @@ class CompanyFixtures extends Fixture
 
             $this->addReference('company-' . $i, $company);
             $manager->persist($company);
-
-            $manager->flush($company);
         }
+        $company = new Company();
+
+        $company->setEmail('user.test@gmail.com');
+        $company->setPassword($this->encoder->encodePassword($company, '12345'));
+        $company->setName('testCompany');
+        $company->setPhoneNumber($faker->phoneNumber());
+
+        $this->addReference('company-test', $company);
+        $manager->persist($company);
+
+        $manager->flush($company);
     }
 }

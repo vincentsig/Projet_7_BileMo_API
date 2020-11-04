@@ -24,8 +24,18 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user->setPhoneNumber($faker->phoneNumber());
             $user->setCompany($this->getReference('company-' . (mt_rand(0, 10))));
             $manager->persist($user);
-            $manager->flush($user);
         }
+
+        for ($i = 0; $i < 50; $i++) {
+            $user = new User();
+            $user->setFirstname($faker->firstname());
+            $user->setLastname($faker->lastName());
+            $user->setEmail($faker->email());
+            $user->setPhoneNumber($faker->phoneNumber());
+            $user->setCompany($this->getReference('company-test'));
+            $manager->persist($user);
+        }
+        $manager->flush($user);
     }
     public function getDependencies()
     {

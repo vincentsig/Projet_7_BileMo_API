@@ -20,8 +20,6 @@ use AppBundle\Exception\ResourceValidationException;
 
 class UserController extends AbstractController
 {
-
-
     private $serializer;
 
     public function __construct(SerializerInterface $serializer)
@@ -289,14 +287,9 @@ class UserController extends AbstractController
     {
         $this->denyAccessUnlessGranted('DELETE_USER', $user);
 
-        $data = [
-            'status' => 200,
-            'message' => 'The user id:' . $user->getId() . ' has been removed'
-        ];
-
         $entityManager->remove($user);
         $entityManager->flush();
 
-        return new Response($this->serializer->serialize($data, 'json'), 200, ['Content-Type' => 'application/json']);
+        return new Response(null, 204, ['Content-Type' => 'application/json']);
     }
 }

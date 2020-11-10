@@ -32,7 +32,7 @@ These are the main constraints for this project:
 
 **1. Download or clone the github repository:**  
 
-      https://github.com/vincentsig/Projet_7_BileMo_API
+      [BileMo Repository](https://github.com/vincentsig/Projet_7_BileMo_API)
 
 **2. Install the back-end  dependencies**
 
@@ -40,7 +40,7 @@ These are the main constraints for this project:
 
 **4. Install Redis and launch the server:**
     
-      https://redis.io/download
+     [Install Redis](https://redis.io/download)
 
 **5 Generate the SSH keys**
 
@@ -53,18 +53,18 @@ These are the main constraints for this project:
       Create an .env.local file and fill in the required environment variables if needed.
 
       ###> doctrine/doctrine-bundle ###
-      DATABASE_URL=mysql://db_user:db_password@127.0.0.1:3306/db_name
+            DATABASE_URL=mysql://db_user:db_password@127.0.0.1:3306/db_name
 
       ###> lexik/jwt-authentication-bundle ###
-      lexik_jwt_authentication:
-            secret_key:       '%kernel.project_dir%/config/jwt/private.pem' # required for token creation
-            public_key:       '%kernel.project_dir%/config/jwt/public.pem'  # required for token verification
-            pass_phrase:      'your_secret_passphrase' # required for token creation, usage of an environment variable is recommended
-      ###< doctrine/doctrine-bundle ###
+            JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
+            JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
+            JWT_PASSPHRASE='your_passphrase'
+      ###< lexik/jwt-authentication-bundle ###
 
       ###> snc/redis-bundle ###
       # passwords that contain special characters (@, %, :, +) must be urlencoded
-      REDIS_URL='your_redis_url'
+            REDIS_HOST='your_host'
+            REDIS_PORT='your_port'
       ###< snc/redis-bundle ###
 
 

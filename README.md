@@ -38,17 +38,17 @@ These are the main constraints for this project:
 
       composer install
 
-**4. Install Redis and launch the server:**
+**3. Install Redis and launch the server:**
     
      [Install Redis](https://redis.io/download)
 
-**5 Generate the SSH keys**
+**4 Generate the SSH keys**
 
       $ mkdir -p config/jwt
       $ openssl genpkey -out config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096
       $ openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout
 
-**6. Setup your environment**
+**5. Setup your environment**
 
       Create an .env.local file and fill in the required environment variables if needed.
 
@@ -68,15 +68,15 @@ These are the main constraints for this project:
       ###< snc/redis-bundle ###
 
 
-**7. Create the Database**
+**6. Create the Database**
 
       php bin/console doctrine:database:create
 
-**8. Update schema**
+**7. Update schema**
  
       php bin/console doctrine:schema:update --force
 
-**9. Load the dataFixtures**
+**8. Load the dataFixtures**
 
       php bin/console doctrine:fixtures:load
 
@@ -84,7 +84,7 @@ These are the main constraints for this project:
 
       curl -X POST -H "Content-Type: application/json" http://127.0.0.1:8000/api/login_check -d '{"username":"user.test@gmail.com","password":"12345"}'
 
-## Documentation**
+## Documentation
 
       The documentation is available on /api/doc
 

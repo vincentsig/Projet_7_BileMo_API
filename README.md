@@ -32,7 +32,7 @@ These are the main constraints for this project:
 
 **1. Download or clone the github repository:**  
 
-      [BileMo Repository](https://github.com/vincentsig/Projet_7_BileMo_API)
+  [BileMo Repository](https://github.com/vincentsig/Projet_7_BileMo_API)
 
 **2. Install the back-end  dependencies**
 
@@ -40,7 +40,7 @@ These are the main constraints for this project:
 
 **3. Install Redis and launch the server:**
     
-     [Install Redis](https://redis.io/download)
+   [Install Redis](https://redis.io/download)
 
 **4 Generate the SSH keys**
 

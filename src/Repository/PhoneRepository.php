@@ -26,10 +26,10 @@ class PhoneRepository extends ServiceEntityRepository
     private $doctrinePhoneCachePool;
 
     /**
-     * @param ManagerRegistry $registry 
-     * @param CacheItemPoolInterface $doctrinePhoneCachePool 
-     * @return void 
-     * @throws LogicException 
+     * @param ManagerRegistry $registry
+     * @param CacheItemPoolInterface $doctrinePhoneCachePool
+     * @return void
+     * @throws LogicException
      */
     public function __construct(ManagerRegistry $registry, CacheItemPoolInterface $doctrinePhoneCachePool)
     {
@@ -39,8 +39,8 @@ class PhoneRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Request $request 
-     * @return PaginatedRepresentation 
+     * @param Request $request
+     * @return PaginatedRepresentation
      */
     public function phonePagination(Request $request): PaginatedRepresentation
     {
@@ -49,7 +49,6 @@ class PhoneRepository extends ServiceEntityRepository
         $limit = $request->query->get('limit', 10);
 
         $paginatedCollection =  $this->doctrinePhoneCachePool->get('phone_list page=' . $page . ',limit=' . $limit, function (ItemInterface $item) use ($page, $limit, $routeName) {
-
             $query =  $this->createQueryBuilder('p');
             $query =  $query->getQuery();
 
@@ -62,9 +61,9 @@ class PhoneRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Pagerfanta $paginator 
-     * @param string $routeName 
-     * @return PaginatedRepresentation 
+     * @param Pagerfanta $paginator
+     * @param string $routeName
+     * @return PaginatedRepresentation
      */
     private function findPaginatedList(PagerFanta $paginator, string $routeName): PaginatedRepresentation
     {

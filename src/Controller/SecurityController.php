@@ -6,18 +6,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Swagger\Annotations as SWG;
 
-
-
 class SecurityController extends AbstractController
 {
     /**
      * lexik_jwt authentication (see the configuration)
      * @Route("/api/login_check", name="login", methods={"POST"})
-     * 
+     *
      * @SWG\Post(
      *     description="Authentication of the Company and get an access token",
      *     tags = {"Authentication"},
-     * 
+     *
      * @SWG\Parameter(
      *     name="Body",
      *     required= true,
@@ -34,7 +32,7 @@ class SecurityController extends AbstractController
      *          )
      *      )
      * )
-     * 
+     *
      * @SWG\Response(
      *      response="200",
      *      description="Successful operation",
@@ -45,7 +43,7 @@ class SecurityController extends AbstractController
      *                  @SWG\Property(property="token", type="string"),
      *              ),
      *          )
-     *     ),    
+     *     ),
      * @SWG\Response(
      *     response=401,
      *     description="Unauthorized: Returned when the JWT Token is not found or expired",
@@ -58,7 +56,7 @@ class SecurityController extends AbstractController
      *     response=500,
      *     description="Internal Server error: Returned when there is an Internal Server error",
      * )
-     *     
+     *
      */
     public function login()
     {

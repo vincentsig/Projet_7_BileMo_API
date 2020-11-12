@@ -10,8 +10,6 @@ use Hateoas\Configuration\Annotation as Hateoas;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-
-
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @Serializer\ExclusionPolicy("all")
@@ -19,7 +17,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * fields={"email"},
  *     message="Your E-Mail adress has already been registered"
  * )
- * 
+ *
  * @Hateoas\Relation(
  *      "Self",
  *          href = @Hateoas\Route(
@@ -32,7 +30,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      attributes={"method"="GET"},
  *      exclusion = @Hateoas\Exclusion(groups={"details", "list"})
  * )
- * 
+ *
  * @Hateoas\Relation(
  *      "Users list",
  *          href = @Hateoas\Route(
@@ -42,7 +40,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      attributes={"method"="GET"},
  *      exclusion = @Hateoas\Exclusion(groups={"details"})
  * )
- * 
+ *
  * @Hateoas\Relation(
  *      "Remove user",
  *          href = @Hateoas\Route(

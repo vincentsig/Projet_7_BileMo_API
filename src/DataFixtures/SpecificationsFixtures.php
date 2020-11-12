@@ -15,7 +15,6 @@ class SpecificationsFixtures extends Fixture
 
     public function load(ObjectManager $manager)
     {
-
         $faker = Faker\Factory::create();
 
         $listOs = ['Android', 'iOS', 'Tizen', 'Linux',];

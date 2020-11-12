@@ -10,7 +10,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class PhoneFixtures extends Fixture implements DependentFixtureInterface
 {
-
     public function load(ObjectManager $manager)
     {
         $listPhone = [

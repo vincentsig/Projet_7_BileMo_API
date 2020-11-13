@@ -58,7 +58,6 @@ class PhoneFixtures extends Fixture
         $phoneNames = call_user_func_array('array_merge', $listPhone);
 
         for ($i = 0; $i < count($phoneNames); $i++) {
-
             $phone = new Phone();
 
             $phone->setName($phoneNames[$i]);
@@ -84,14 +83,16 @@ class PhoneFixtures extends Fixture
 
     /**
      * Get the Brand of the phoneName
-     * @param string $phoneName 
-     * @param array $listPhone 
-     * @return string 
+     * @param string $phoneName
+     * @param array $listPhone
+     * @return string
      */
     private function getBrandName($phoneName, $listPhone): string
     {
         foreach ($listPhone as $key => $value) {
-            if (in_array($phoneName, $value)) return $key;
+            if (in_array($phoneName, $value)) {
+                return $key;
+            }
         }
     }
 }

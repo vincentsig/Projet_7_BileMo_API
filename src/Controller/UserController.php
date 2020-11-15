@@ -258,8 +258,8 @@ class UserController extends AbstractController
      * ),
      *
      * @SWG\Response(
-     *     response=200,
-     *     description="OK: The user has been removed",
+     *     response=204,
+     *     description="No Content",
      * ),
      * @SWG\Response(
      *     response=401,

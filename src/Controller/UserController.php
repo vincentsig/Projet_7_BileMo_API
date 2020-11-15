@@ -17,7 +17,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use AppBundle\Exception\ResourceValidationException;
 
-
 class UserController extends AbstractController
 {
     private $serializer;
@@ -32,12 +31,12 @@ class UserController extends AbstractController
      * @return Response
      * @param UserRepository $repo
      * @param Request $request
-     * 
+     *
      * @SWG\Get(
      *     description="Get the paginated list of users corresponding to the company.",
      *     tags = {"User"},
      * )
-     * 
+     *
      * @SWG\Parameter(
      *     name="page",
      *     in="query",
@@ -50,7 +49,7 @@ class UserController extends AbstractController
      *     type="integer",
      *     description="number items per page"
      * ),
-     * 
+     *
      * @SWG\Response(
      *     response=200,
      *     description="OK: Returns the paginated list of users",
@@ -79,7 +78,7 @@ class UserController extends AbstractController
      *     response=500,
      *     description="Internal Server error: Returned when there is an Internal Server error",
      * )
-     * 
+     *
      * @SWG\Tag(name="User")
      * @Security(name="Bearer")
      */
@@ -98,14 +97,14 @@ class UserController extends AbstractController
     /**
      * @param User $user
      * @return Response
-     * 
+     *
      * @Route("api/users/{id}", name="api_user_details", methods={"GET"})
-     * 
+     *
      * @SWG\Get(
      *      description="Get the details of one user.",
      *      tags = {"User"},
      * )
-     * 
+     *
      * @SWG\Parameter(
      *      name="id",
      *      in="path",
@@ -113,7 +112,7 @@ class UserController extends AbstractController
      *      required=true,
      *      type="integer",
      * )
-     * 
+     *
      * @SWG\Response(
      *     response=200,
      *     description="OK: Returns the details one user",
@@ -142,7 +141,7 @@ class UserController extends AbstractController
      *     response=500,
      *     description="Internal Server error: Returned when there is an Internal Server error",
      * )
-     * 
+     *
      * @SWG\Tag(name="User")
      * @Security(name="Bearer")
      */
@@ -161,15 +160,15 @@ class UserController extends AbstractController
      * @return Response
      * @param EntityManagerInterface $entityManager
      * @param ValidatorInterface $validator
-     * 
+     *
      * @Route("api/users", name="api_add_user", methods={"POST"})
      *
-     * 
+     *
      * @SWG\Post(
      *      description="Create a new user",
      *      tags = {"User"},
      * ),
-     * 
+     *
      * @SWG\Parameter(
      *          name="Body",
      *          required= true,
@@ -181,7 +180,7 @@ class UserController extends AbstractController
      *              @SWG\Items(ref=@Model(type=User::class, groups={"details"}))
      *            )
      * ),
-     *    
+     *
      * @SWG\Response(
      *     response=200,
      *     description="OK: The user has been created",
@@ -198,7 +197,7 @@ class UserController extends AbstractController
      *     response=500,
      *     description="Internal Server error: Returned when there is an Internal Server error",
      * )
-     * 
+     *
      * @SWG\Tag(name="User")
      * @Security(name="Bearer")
      */
@@ -211,7 +210,6 @@ class UserController extends AbstractController
         if (count($errors)) {
             $violations = [];
             foreach ($errors as $violation) {
-
                 $violations[$violation->getPropertyPath()][] = $violation->getMessage();
             }
 
@@ -241,16 +239,16 @@ class UserController extends AbstractController
      * @return Response
      * @param User $user
      * @param EntityManagerInterface $entityManager
-     * 
-     * 
+     *
+     *
      * @Route("api/users/{id}", name="api_remove_user", methods="DELETE")
-     * 
-     * 
+     *
+     *
      * @SWG\Delete(
      *      description="Remove a user belonging to your company",
      *      tags = {"User"},
      * ),
-     * 
+     *
      * @SWG\Parameter(
      *      name="id",
      *      in="path",
@@ -258,7 +256,7 @@ class UserController extends AbstractController
      *      required=true,
      *      type="integer",
      * ),
-     * 
+     *
      * @SWG\Response(
      *     response=200,
      *     description="OK: The user has been removed",
@@ -279,7 +277,7 @@ class UserController extends AbstractController
      *     response=500,
      *     description="Internal Server error: Returned when there is an Internal Server error",
      * )
-     * 
+     *
      * @SWG\Tag(name="User")
      * @Security(name="Bearer")
      */

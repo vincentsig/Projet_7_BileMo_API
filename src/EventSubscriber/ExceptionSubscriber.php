@@ -14,7 +14,6 @@ use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class ExceptionSubscriber implements EventSubscriberInterface
 {
-
     public function onKernelException(ExceptionEvent $event)
     {
         $exception = $event->getThrowable();
@@ -41,7 +40,6 @@ class ExceptionSubscriber implements EventSubscriberInterface
         }
 
         if ($exception instanceof ResourceValidationException) {
-
             $fields = json_decode($exception->getMessage());
             $data = [
                 'code' => $exception->getStatusCode(),
@@ -50,11 +48,12 @@ class ExceptionSubscriber implements EventSubscriberInterface
             ];
         }
 
-        if ($exception instanceof AccessDeniedHttpException)
+        if ($exception instanceof AccessDeniedHttpException) {
             $data = [
                 'code' => $exception->getStatusCode(),
                 'message' => 'Acces Denied'
             ];
+        }
 
         if ($exception instanceof MethodNotAllowedHttpException) {
             $data = [

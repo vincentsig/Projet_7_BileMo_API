@@ -11,7 +11,7 @@ use JMS\Serializer\Annotation as Serializer;
 /**
  * @ORM\Entity(repositoryClass=PhoneRepository::class)
  * @Serializer\ExclusionPolicy("all")
- * 
+ *
  * @Hateoas\Relation(
  *      name = "self",
  *      href = @Hateoas\Route(
@@ -22,7 +22,7 @@ use JMS\Serializer\Annotation as Serializer;
  *     attributes={"method"="GET"},
  *     exclusion = @Hateoas\Exclusion(groups={"details","list"})
  * )
- * 
+ *
  * @Hateoas\Relation(
  *    "list",
  *    href = @Hateoas\Route(
@@ -46,7 +46,7 @@ class Phone
      * @ORM\Column(type="string", length=255)
      * @Serializer\Expose()
      * @Groups({"list","details"})
-     * 
+     *
      */
     private $name;
 
@@ -78,13 +78,76 @@ class Phone
      */
     private $description;
 
+
     /**
-     * @ORM\ManyToOne(targetEntity=Specification::class, inversedBy="phones")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="string", length=255)
+     * @Groups("details")
      * @Serializer\Expose()
-     * @Groups({"details"})
      */
-    private $specifications;
+    private $OS;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
+     */
+    private $storage;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
+     */
+    private $sim;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
+     */
+    private $network;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
+     */
+    private $wifi;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
+     */
+    private $rear_camera_resolution;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
+     */
+    private $front_camera_resolution;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
+     */
+    private $display_resolution;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
+     */
+    private $dimensions;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups("details")
+     * @Serializer\Expose()
+     */
+    private $weight;
 
     public function getId(): ?int
     {
@@ -151,14 +214,122 @@ class Phone
         return $this;
     }
 
-    public function getSpecifications(): ?specification
+    public function getOS(): ?string
     {
-        return $this->specifications;
+        return $this->OS;
     }
 
-    public function setSpecifications(?specification $specifications): self
+    public function setOS(string $OS): self
     {
-        $this->specifications = $specifications;
+        $this->OS = $OS;
+
+        return $this;
+    }
+
+    public function getStorage(): ?string
+    {
+        return $this->storage;
+    }
+
+    public function setStorage(string $storage): self
+    {
+        $this->storage = $storage;
+
+        return $this;
+    }
+
+    public function getSim(): ?string
+    {
+        return $this->sim;
+    }
+
+    public function setSim(string $sim): self
+    {
+        $this->sim = $sim;
+
+        return $this;
+    }
+
+    public function getNetwork(): ?string
+    {
+        return $this->network;
+    }
+
+    public function setNetwork(string $network): self
+    {
+        $this->network = $network;
+
+        return $this;
+    }
+
+    public function getWifi(): ?string
+    {
+        return $this->wifi;
+    }
+
+    public function setWifi(string $wifi): self
+    {
+        $this->wifi = $wifi;
+
+        return $this;
+    }
+
+    public function getRearCameraResolution(): ?string
+    {
+        return $this->rear_camera_resolution;
+    }
+
+    public function setRearCameraResolution(string $rear_camera_resolution): self
+    {
+        $this->rear_camera_resolution = $rear_camera_resolution;
+
+        return $this;
+    }
+
+    public function getFrontCameraResolution(): ?string
+    {
+        return $this->front_camera_resolution;
+    }
+
+    public function setFrontCameraResolution(string $front_camera_resolution): self
+    {
+        $this->front_camera_resolution = $front_camera_resolution;
+
+        return $this;
+    }
+
+    public function getDisplayResolution(): ?string
+    {
+        return $this->display_resolution;
+    }
+
+    public function setDisplayResolution(string $display_resolution): self
+    {
+        $this->display_resolution = $display_resolution;
+
+        return $this;
+    }
+
+    public function getDimensions(): ?string
+    {
+        return $this->dimensions;
+    }
+
+    public function setDimensions(string $dimensions): self
+    {
+        $this->dimensions = $dimensions;
+
+        return $this;
+    }
+
+    public function getWeight(): ?string
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(string $weight): self
+    {
+        $this->weight = $weight;
 
         return $this;
     }

@@ -10,10 +10,8 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class UserFixtures extends Fixture implements DependentFixtureInterface
 {
-
     public function load(ObjectManager $manager)
     {
-
         $faker = Faker\Factory::create('fr_FR');
 
         for ($i = 0; $i < 500; $i++) {

@@ -32,51 +32,51 @@ These are the main constraints for this project:
 
 **1. Download or clone the github repository:**  
 
-      https://github.com/vincentsig/Projet_7_BileMo_API
+  [BileMo Repository](https://github.com/vincentsig/Projet_7_BileMo_API)
 
 **2. Install the back-end  dependencies**
 
       composer install
 
-**4. Install Redis and launch the server:**
+**3. Install Redis and launch the server:**
     
-      https://redis.io/download
+   [Install Redis](https://redis.io/download)
 
-**5 Generate the SSH keys**
+**4 Generate the SSH keys**
 
       $ mkdir -p config/jwt
       $ openssl genpkey -out config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096
       $ openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout
 
-**6. Setup your environment**
+**5. Setup your environment**
 
       Create an .env.local file and fill in the required environment variables if needed.
 
       ###> doctrine/doctrine-bundle ###
-      DATABASE_URL=mysql://db_user:db_password@127.0.0.1:3306/db_name
+            DATABASE_URL=mysql://db_user:db_password@127.0.0.1:3306/db_name
 
       ###> lexik/jwt-authentication-bundle ###
-      lexik_jwt_authentication:
-            secret_key:       '%kernel.project_dir%/config/jwt/private.pem' # required for token creation
-            public_key:       '%kernel.project_dir%/config/jwt/public.pem'  # required for token verification
-            pass_phrase:      'your_secret_passphrase' # required for token creation, usage of an environment variable is recommended
-      ###< doctrine/doctrine-bundle ###
+            JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
+            JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
+            JWT_PASSPHRASE='your_passphrase'
+      ###< lexik/jwt-authentication-bundle ###
 
       ###> snc/redis-bundle ###
       # passwords that contain special characters (@, %, :, +) must be urlencoded
-      REDIS_URL='your_redis_url'
+            REDIS_HOST='your_host'
+            REDIS_PORT='your_port'
       ###< snc/redis-bundle ###
 
 
-**7. Create the Database**
+**6. Create the Database**
 
       php bin/console doctrine:database:create
 
-**8. Update schema**
+**7. Update schema**
  
       php bin/console doctrine:schema:update --force
 
-**9. Load the dataFixtures**
+**8. Load the dataFixtures**
 
       php bin/console doctrine:fixtures:load
 
@@ -84,7 +84,7 @@ These are the main constraints for this project:
 
       curl -X POST -H "Content-Type: application/json" http://127.0.0.1:8000/api/login_check -d '{"username":"user.test@gmail.com","password":"12345"}'
 
-## Documentation**
+## Documentation
 
       The documentation is available on /api/doc
 

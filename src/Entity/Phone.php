@@ -11,7 +11,7 @@ use JMS\Serializer\Annotation as Serializer;
 /**
  * @ORM\Entity(repositoryClass=PhoneRepository::class)
  * @Serializer\ExclusionPolicy("all")
- * 
+ *
  * @Hateoas\Relation(
  *      name = "self",
  *      href = @Hateoas\Route(
@@ -22,7 +22,7 @@ use JMS\Serializer\Annotation as Serializer;
  *     attributes={"method"="GET"},
  *     exclusion = @Hateoas\Exclusion(groups={"details","list"})
  * )
- * 
+ *
  * @Hateoas\Relation(
  *    "list",
  *    href = @Hateoas\Route(
@@ -46,7 +46,7 @@ class Phone
      * @ORM\Column(type="string", length=255)
      * @Serializer\Expose()
      * @Groups({"list","details"})
-     * 
+     *
      */
     private $name;
 

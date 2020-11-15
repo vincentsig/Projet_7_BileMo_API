@@ -4,8 +4,6 @@ namespace AppBundle\Exception;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-
-
 class ResourceValidationException extends HttpException
 {
     public function __construct(string $message = null, \Throwable $previous = null, int $code = 0, array $headers = [])

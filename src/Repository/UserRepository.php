@@ -26,10 +26,10 @@ class UserRepository extends ServiceEntityRepository
     private $doctrineUserCachePool;
 
     /**
-     * @param ManagerRegistry $registry 
-     * @param CacheItemPoolInterface $doctrineUserCachePool 
-     * @return void 
-     * @throws LogicException 
+     * @param ManagerRegistry $registry
+     * @param CacheItemPoolInterface $doctrineUserCachePool
+     * @return void
+     * @throws LogicException
      */
     public function __construct(ManagerRegistry $registry, CacheItemPoolInterface $doctrineUserCachePool)
     {
@@ -39,9 +39,9 @@ class UserRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Request $request 
-     * @param int $companyId 
-     * @return UsersRepresentation 
+     * @param Request $request
+     * @param int $companyId
+     * @return UsersRepresentation
      */
     public function usersPagination(Request $request, int $companyId): UsersRepresentation
     {
@@ -50,7 +50,6 @@ class UserRepository extends ServiceEntityRepository
         $limit = $request->query->get('limit', 10);
 
         $paginatedCollection =  $this->doctrineUserCachePool->get('user_list companyId=' . $companyId . 'page=' . $page . ',limit=' . $limit, function (ItemInterface $item) use ($page, $limit, $routeName, $companyId) {
-
             $query = $this->createQueryBuilder('u')
                 ->where('u.company = :companyId')
                 ->setParameters([
@@ -67,9 +66,9 @@ class UserRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Pagerfanta $paginator 
-     * @param string $routeName 
-     * @return UsersRepresentation 
+     * @param Pagerfanta $paginator
+     * @param string $routeName
+     * @return UsersRepresentation
      */
     private function findPaginatedList(Pagerfanta $paginator, string $routeName): UsersRepresentation
     {

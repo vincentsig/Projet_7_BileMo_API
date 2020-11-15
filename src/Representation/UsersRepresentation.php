@@ -54,11 +54,11 @@ use Hateoas\Representation\AbstractSegmentedRepresentation;
  *          excludeIf = "expr((object.getPage() - 1) < 1)"
  *      )
  * )
- * 
+ *
  * @Hateoas\Relation(
  *      "Add new user",
  *      href = @Hateoas\Route("api_add_user",
- *      absolute = true)  
+ *      absolute = true)
  * )
  */
 class UsersRepresentation extends AbstractSegmentedRepresentation

@@ -14,9 +14,9 @@ class CacheSubscriber implements EventSubscriber
     private $doctrineUserCachePool;
 
     /**
-     * @param CacheItemPoolInterface $doctrineUserCachePool 
-     * @param CacheItemPoolInterface $doctrinePhoneCachePool 
-     * @return void 
+     * @param CacheItemPoolInterface $doctrineUserCachePool
+     * @param CacheItemPoolInterface $doctrinePhoneCachePool
+     * @return void
      */
     public function __construct(CacheItemPoolInterface $doctrineUserCachePool, CacheItemPoolInterface $doctrinePhoneCachePool)
     {
@@ -33,8 +33,8 @@ class CacheSubscriber implements EventSubscriber
     }
 
     /**
-     * @param LifecycleEventArgs $args 
-     * @return void 
+     * @param LifecycleEventArgs $args
+     * @return void
      */
     public function postPersist(LifecycleEventArgs $args)
     {
@@ -42,8 +42,8 @@ class CacheSubscriber implements EventSubscriber
     }
 
     /**
-     * @param LifecycleEventArgs $args 
-     * @return void 
+     * @param LifecycleEventArgs $args
+     * @return void
      */
     public function postRemove(LifecycleEventArgs $args)
     {
@@ -51,8 +51,8 @@ class CacheSubscriber implements EventSubscriber
     }
 
     /**
-     * @param LifecycleEventArgs $args 
-     * @return void 
+     * @param LifecycleEventArgs $args
+     * @return void
      */
     private function invalidCache(LifecycleEventArgs $args)
     {

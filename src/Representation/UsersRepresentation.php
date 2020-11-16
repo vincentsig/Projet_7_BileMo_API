@@ -58,7 +58,8 @@ use Hateoas\Representation\AbstractSegmentedRepresentation;
  * @Hateoas\Relation(
  *      "Add new user",
  *      href = @Hateoas\Route("api_add_user",
- *      absolute = true)
+ *      absolute = true),
+ *      attributes={"method"="POST"},
  * )
  */
 class UsersRepresentation extends AbstractSegmentedRepresentation

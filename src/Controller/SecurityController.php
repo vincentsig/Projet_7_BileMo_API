@@ -20,13 +20,11 @@ class SecurityController extends AbstractController
      *     name="Body",
      *     required= true,
      *     in="body",
-     *     type="string",
+     *     type="array",
      *     description="Use your email and password",
      *     @SWG\Schema(
-     *          type="array",
-     *              @SWG\Items(
      *                  type="object",
-     *                  @SWG\Property(property="email", type="string"),
+     *                  @SWG\Property(property="username", type="string"),
      *                  @SWG\Property(property="password", type="string"),
      *              ),
      *          )
@@ -37,13 +35,15 @@ class SecurityController extends AbstractController
      *      response="200",
      *      description="Successful operation",
      *          @SWG\Schema(
-     *              type="array",
-     *              @SWG\Items(
      *                  type="object",
-     *                  @SWG\Property(property="token", type="string"),
+     *                  @SWG\Property(property="token", type="string")
      *              ),
      *          )
      *     ),
+     * @SWG\Response(
+     *     response=400,
+     *     description="Bad Request: Returned when the parameters are not valid",
+     * ),
      * @SWG\Response(
      *     response=401,
      *     description="Unauthorized: Returned when the JWT Token is not found or expired",

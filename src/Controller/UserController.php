@@ -173,17 +173,20 @@ class UserController extends AbstractController
      *          name="Body",
      *          required= true,
      *          in="body",
-     *          type="string",
+     *          type="array",
      *          description="All property user to add",
-     * @SWG\Schema(
-     *              type="array",
-     *              @SWG\Items(ref=@Model(type=User::class, groups={"details"}))
-     *            )
+     * @SWG\Schema(ref=@Model(type=User::class, groups={"details"}))
+     *              
+     *            
      * ),
      *
      * @SWG\Response(
      *     response=200,
      *     description="OK: The user has been created",
+     * ),
+     *  @SWG\Response(
+     *     response=400,
+     *     description="Bad Request: Returned when the user parameters are not valid ",
      * ),
      * @SWG\Response(
      *     response=401,

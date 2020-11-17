@@ -108,7 +108,7 @@ class UserController extends AbstractController
      * @SWG\Parameter(
      *      name="id",
      *      in="path",
-     *      description="Id of the phone",
+     *      description="id of the user",
      *      required=true,
      *      type="integer",
      * )

@@ -103,7 +103,7 @@ class PhoneController extends AbstractController
      *  @SWG\Parameter(
      *      name="id",
      *      in="path",
-     *      description="Id of the phone",
+     *      description="id of the phone",
      *      required=true,
      *      type="integer",
      * )
